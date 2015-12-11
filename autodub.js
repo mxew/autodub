@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.08",
+  version: "00.09",
   whatsNew: "",
   firstMessage: "AutoDub has TWO modes. Classic mode and Timer mode. Classic mode upvotes right away when each song starts. Timer mode upvotes at a random time during the song. Toggle between the two modes in the dubtrack.fm left menu (the menu with the link to the lobby and stuff).",
   lastLoaded: null,
@@ -86,7 +86,7 @@ autoDub.init = function() {
   var script = document.createElement('script');
   script.id = 'aptimer';
   script.type = 'text/javascript';
-  script.src = 'https://854.github.io/jquery.countdown.min.js';
+  script.src = 'https://cdn.rawgit.com/mxew/autodub/master/jquery.countdown.min.js';
   document.body.appendChild(script);
   autoDub.storage.restore();
   Dubtrack.Events.bind("realtime:room_playlist-update", autoDub.newSong);

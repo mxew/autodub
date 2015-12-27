@@ -86,7 +86,7 @@ autoDub.init = function() {
   var script = document.createElement('script');
   script.id = 'aptimer';
   script.type = 'text/javascript';
-  script.src = 'https://cdn.rawgit.com/mxew/autodub/master/jquery.countdown.min.js';
+  script.src = 'https://mxew.github.io/autodub/jquery.countdown.min.js';
   document.body.appendChild(script);
   autoDub.storage.restore();
   Dubtrack.Events.bind("realtime:room_playlist-update", autoDub.newSong);

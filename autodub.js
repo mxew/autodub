@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.10",
+  version: "00.11",
   whatsNew: "",
   firstMessage: "AutoDub has TWO modes. Classic mode and Timer mode. Classic mode upvotes right away when each song starts. Timer mode upvotes at a random time during the song. Toggle between the two modes in the dubtrack.fm left menu (the menu with the link to the lobby and stuff).",
   lastLoaded: null,
@@ -99,11 +99,11 @@ autoDub.init = function() {
 autoDub.idmode = {
   discoball: {
     create: function() {
-      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(http://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -360px;\"></div>");
+      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(http://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
     },
     up: function() {
       $("#discoball").animate({
-        'margin-top': '-360px'
+        'margin-top': '-377px'
       }, 2000);
     },
     down: function() {

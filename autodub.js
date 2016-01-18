@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.13",
+  version: "00.14",
   whatsNew: "We got rid of the long broken classic mode. Timer mode is now the default option. Send all complaints to chat@howtojointheindiediscothequewaitlist.com",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
@@ -76,7 +76,9 @@ autoDub.newSong = function(data) {
 autoDub.newChat = function(data) {
   var id = data.chatid;
   if (autoDub.idmode.userid && autoDub.idmode.arnold){
-    $(".chat-id-" + id).find(".cursor-pointer").attr("src", "http://i.imgur.com/1AME7v3.png");
+    setTimeout(function(){
+      $(".chat-id-" + id).find(".cursor-pointer").attr("src", "http://i.imgur.com/1AME7v3.png");
+    }, 1500);
   }
 };
 

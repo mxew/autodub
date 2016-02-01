@@ -1,12 +1,14 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.15",
-  whatsNew: "",
+  version: "00.16",
+  whatsNew: "We added the option for user join/leave messages in your chat box. You can toggle them in the left dubtrack menu.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
   songtimer: null,
+  users: {},
+  joinLeaves: false,
   userid: null,
   toolTip: null,
   lastSong: null
@@ -82,6 +84,19 @@ autoDub.newChat = function(data) {
   }
 };
 
+autoDub.chatSpam = {
+  joinLeave: function (id, name, type){
+    var color = "#b6ffc0";
+    var msg = name+" has joined the room";
+    if (type == "leave"){
+      color = "#ffa1a1";
+      msg = name+" left the room";
+    }
+    $(".chat-main").append("<li style=\"color:"+color+"; font-weight:700px;\">"+msg+".</li>");
+    Dubtrack.room.chat.scollBottomChat();
+  }
+};
+
 autoDub.init = function() {
   autoDub.started = true;
   var script = document.createElement('script');
@@ -91,10 +106,28 @@ autoDub.init = function() {
   document.body.appendChild(script);
   autoDub.storage.restore();
   Dubtrack.Events.bind("realtime:room_playlist-update", autoDub.newSong);
+  Dubtrack.Events.bind("realtime:user-leave", autoDub.userLeave);
+  Dubtrack.Events.bind("realtime:user-join", autoDub.userJoin);
   Dubtrack.Events.bind("realtime:room_playlist-dub", autoDub.newVote);
   Dubtrack.Events.bind("realtime:chat-message", autoDub.newChat);
   $(".dubup").click();
   console.log("autodub v" + autoDub.version + " is a go!");
+};
+
+autoDub.userJoin = function(data){
+  var id = data.user._id;
+  var name = data.user.username;
+  if (!autoDub.users[id]){
+    autoDub.users[id] = true;
+    if (autoDub.joinLeaves) autoDub.chatSpam.joinLeave(id, name, "join");
+  }
+};
+
+autoDub.userLeave = function(data){
+  var id = data.user._id;
+  var name = data.user.username;
+  autoDub.users[id] = false;
+  if (autoDub.joinLeaves) autoDub.chatSpam.joinLeave(id, name, "leave");
 };
 
 autoDub.idmode = {
@@ -181,7 +214,7 @@ autoDub.idmode = {
 };
 
 autoDub.ui = {
-  init: function(mode) {
+  init: function(mode, jl) {
     var themode = autoDub.mode;
     if (mode) themode = mode;
     autoDub.roomCheck = setInterval(function() {
@@ -191,7 +224,16 @@ autoDub.ui = {
         autoDub.roomCheck = null;
       }
     }, 2000);
+    var jlm = "off";
+    if (jl){
+      jlm = "on";
+    } if (autoDub.joinLeaves){
+      jlm = "on";
+    }
+
     $("#main-menu-left").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">AutoDub</span> <span style=\"float:right;\" id=\"autoDubTimer\"></span></a>");
+    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave: <span id=\"autoDubjlm\">"+jlm+"</span>");
+
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
       $('<p class="tooltip" style="max-width:150px;opacity:0.7;z-index:1000000;position:absolute;padding:5px;background-color:cyan;color:#000;font-size:14px;font-weight:700;"></p>')
@@ -223,6 +265,18 @@ autoDub.ui = {
   }
 };
 
+autoDub.jlmToggle = function(){
+  var label = "off";
+  if (autoDub.joinLeaves){
+    autoDub.joinLeaves = false;
+  } else {
+    label = "on";
+    autoDub.joinLeaves = true;
+  }
+  autoDub.storage.save();
+  $("#autoDubjlm").text(label);
+};
+
 autoDub.newVote = function(data) {
   var username = $(".user-info").text();
   if (data.user.username == username) {
@@ -242,6 +296,7 @@ autoDub.storage = {
     var save_file = {
       mode: autoDub.mode,
       autoVote: autoDub.autoVote,
+      joinLeaves: autoDub.joinLeaves,
       lastLoaded: autoDub.lastLoaded
     };
     var preferences = JSON.stringify(save_file);
@@ -257,7 +312,9 @@ autoDub.storage = {
     console.log("autodub settings found.");
     var preferences = JSON.parse(favorite);
     $.extend(autoDub, preferences);
-    autoDub.ui.init(preferences.mode);
+    var jl = false;
+    if (preferences.joinLeaves) jl = preferences.joinLeaves;
+    autoDub.ui.init(preferences.mode, jl);
   }
 };
 

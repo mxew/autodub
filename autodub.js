@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.14",
-  whatsNew: "We got rid of the long broken classic mode. Timer mode is now the default option. Send all complaints to chat@howtojointheindiediscothequewaitlist.com",
+  version: "00.15",
+  whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
@@ -209,7 +209,6 @@ autoDub.ui = {
         })
     });
     if (window.location.href.match(/\/join\/indie-discotheque/)) {
-      $(".right_section").css("margin-top", "10px");
       $(".right_section").prepend("<div id=\"discobal\" style=\"position: absolute; margin-top: -20px; font-size: 14px;\">Loading your Discocheque balance...</div>");
       autoDub.idmode.discoball.create();
       setTimeout(function() {

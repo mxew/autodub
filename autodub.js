@@ -1,12 +1,13 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.16",
-  whatsNew: "We added the option for user join/leave messages in your chat box. You can toggle them in the left dubtrack menu.",
+  version: "00.17",
+  whatsNew: "We added the option for user join/leave messages in your chat box. Also downvote alerts. You can toggle them in the left dubtrack menu.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
   songtimer: null,
+  dvm: true,
   users: {},
   joinLeaves: false,
   userid: null,
@@ -92,7 +93,11 @@ autoDub.chatSpam = {
       color = "#ffa1a1";
       msg = name+" left the room";
     }
-    $(".chat-main").append("<li style=\"color:"+color+"; font-weight:700px;\">"+msg+".</li>");
+    $(".chat-main").append("<li style=\"color:"+color+";\">"+msg+".</li>");
+    Dubtrack.room.chat.scollBottomChat();
+  },
+  dv: function (name){
+    $(".chat-main").append("<li style=\"color:magenta;\">"+name+" downvoted this song.</li>");
     Dubtrack.room.chat.scollBottomChat();
   }
 };
@@ -214,7 +219,7 @@ autoDub.idmode = {
 };
 
 autoDub.ui = {
-  init: function(mode, jl) {
+  init: function(mode, jl, dv) {
     var themode = autoDub.mode;
     if (mode) themode = mode;
     autoDub.roomCheck = setInterval(function() {
@@ -224,15 +229,23 @@ autoDub.ui = {
         autoDub.roomCheck = null;
       }
     }, 2000);
+
     var jlm = "off";
     if (jl){
       jlm = "on";
-    } if (autoDub.joinLeaves){
+    } else if (autoDub.joinLeaves){
       jlm = "on";
+    }
+    var dvm = "off";
+    if (dv){
+      dvm = "on";
+    } else if (autoDub.dvm){
+      dvm = "on";
     }
 
     $("#main-menu-left").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">AutoDub</span> <span style=\"float:right;\" id=\"autoDubTimer\"></span></a>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave: <span id=\"autoDubjlm\">"+jlm+"</span>");
+    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert: <span id=\"autoDubdvm\">"+dvm+"</span>");
 
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -277,6 +290,18 @@ autoDub.jlmToggle = function(){
   $("#autoDubjlm").text(label);
 };
 
+autoDub.dvmToggle = function(){
+  var label = "off";
+  if (autoDub.dvm){
+    autoDub.dvm = false;
+  } else {
+    label = "on";
+    autoDub.dvm = true;
+  }
+  autoDub.storage.save();
+  $("#autoDubdvm").text(label);
+};
+
 autoDub.newVote = function(data) {
   var username = $(".user-info").text();
   if (data.user.username == username) {
@@ -289,6 +314,9 @@ autoDub.newVote = function(data) {
       console.log("autovote off until next song.");
     }
   }
+  if (data.dubtype == "downdub"){
+      if (autoDub.dvm) autoDub.chatSpam.dv(data.user.username);
+  }
 };
 
 autoDub.storage = {
@@ -297,7 +325,8 @@ autoDub.storage = {
       mode: autoDub.mode,
       autoVote: autoDub.autoVote,
       joinLeaves: autoDub.joinLeaves,
-      lastLoaded: autoDub.lastLoaded
+      lastLoaded: autoDub.lastLoaded,
+      dvm: autoDub.dvm
     };
     var preferences = JSON.stringify(save_file);
     localStorage["autoDub"] = preferences;

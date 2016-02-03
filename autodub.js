@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.17",
+  version: "00.18",
   whatsNew: "We added the option for user join/leave messages in your chat box. Also downvote alerts. You can toggle them in the left dubtrack menu.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
@@ -207,7 +207,7 @@ autoDub.idmode = {
     $("#discobal").text("Balance: " + bal + " discocheques");
   },
   getName: function() {
-    var username = $(".user-info").text();
+    var username = $(".user-info").first().text();
     if (username == "") {
       setTimeout(function() {
         autoDub.idmode.getName();
@@ -303,7 +303,7 @@ autoDub.dvmToggle = function(){
 };
 
 autoDub.newVote = function(data) {
-  var username = $(".user-info").text();
+  var username = $(".user-info").first().text();
   if (data.user.username == username) {
     //cancel the upvote if user voted
     if (autoDub.songtimer != null) {

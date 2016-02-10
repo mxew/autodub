@@ -246,7 +246,8 @@ autoDub.ui = {
     $("#main-menu-left").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">AutoDub</span> <span style=\"float:right;\" id=\"autoDubTimer\"></span></a>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave: <span id=\"autoDubjlm\">"+jlm+"</span>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert: <span id=\"autoDubdvm\">"+dvm+"</span>");
-    $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" )    autoDub.ui.toolTips();
+    $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
+    autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
       $('<p class="tooltip" style="max-width:150px;opacity:0.7;z-index:1000000;position:absolute;padding:5px;background-color:cyan;color:#000;font-size:14px;font-weight:700;"></p>')
         .text(autoDub.toolTip)

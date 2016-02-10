@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.18",
-  whatsNew: "We added the option for user join/leave messages in your chat box. Also downvote alerts. You can toggle them in the left dubtrack menu.",
+  version: "00.19",
+  whatsNew: "Removed that obnoxious eye icon that dubtrack slaps onto the screen when the video is hidden.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
@@ -246,8 +246,7 @@ autoDub.ui = {
     $("#main-menu-left").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">AutoDub</span> <span style=\"float:right;\" id=\"autoDubTimer\"></span></a>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave: <span id=\"autoDubjlm\">"+jlm+"</span>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert: <span id=\"autoDubdvm\">"+dvm+"</span>");
-
-    autoDub.ui.toolTips();
+    $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" )    autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
       $('<p class="tooltip" style="max-width:150px;opacity:0.7;z-index:1000000;position:absolute;padding:5px;background-color:cyan;color:#000;font-size:14px;font-weight:700;"></p>')
         .text(autoDub.toolTip)

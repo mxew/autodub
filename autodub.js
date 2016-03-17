@@ -3,8 +3,8 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.21",
-  whatsNew: "Removed that obnoxious eye icon that dubtrack slaps onto the screen when the video is hidden.",
+  version: "00.22",
+  whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
@@ -143,6 +143,7 @@ autoDub.idmode = {
   discoball: {
     create: function() {
       $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(http://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
+      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
     },
     up: function() {
       $("#discoball").animate({
@@ -223,6 +224,15 @@ if (autoDub.eveTalk) et = "on";
     } else {
       autoDub.idmode.discoball.up();
     }
+      if (typeof data.dancers != "undefined"){
+
+    var currentDancers = $("#dancers").is(":visible");
+    if (data.dancers != currentDancers){
+      $( "#dancers" ).slideToggle( "slow", function() {
+          //dancers toggled
+      });
+    }
+  }
   },
   balchange: function(snapshot) {
     var data = snapshot.val();

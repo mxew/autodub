@@ -3,11 +3,12 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.22",
+  version: "00.23",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
+  altDancers: false,
   songtimer: null,
   eveTalk: false,
   firstTalk: false,
@@ -143,7 +144,11 @@ autoDub.idmode = {
   discoball: {
     create: function() {
       $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(http://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
-      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+      if (!autoDub.altDancers){
+        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+      } else {
+      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+      }
     },
     up: function() {
       $("#discoball").animate({
@@ -198,9 +203,12 @@ autoDub.idmode = {
       autoDub.idmode.roomShitChange(snapshot);
     });
 var et = "off";
+var altD = "off";
+if (autoDub.altDancers) altD = "on";
 if (autoDub.eveTalk) et = "on";
 
   $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk: <span id=\"autoDubet\">"+et+"</span>");
+   $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer: <span id=\"autoDubaltd\">"+altD+"</span>");
 
 
   },
@@ -353,6 +361,23 @@ autoDub.etToggle = function(){
 };
 
 
+autoDub.altDToggle = function(){
+  var label = "off";
+  if (autoDub.altDancers){
+    autoDub.altDancers = false;
+  $( ".dncr").css( "width", "59px" );
+  $( ".dncr" ).css( "background-image", "url(https://i.imgur.com/IieFNhZ.gif)" );
+
+  } else {
+    label = "on";
+    autoDub.altDancers = true;
+  $( ".dncr").css( "width", "88px" );
+  $( ".dncr" ).css( "background-image", "url(https://i.imgur.com/aeOoQTZ.gif)" );
+  }
+  autoDub.storage.save();
+  $("#autoDubaltd").text(label);
+};
+
 autoDub.newVote = function(data) {
   var username = $(".user-info").first().text();
   if (data.user.username == username) {
@@ -376,6 +401,7 @@ autoDub.storage = {
       mode: autoDub.mode,
       autoVote: autoDub.autoVote,
       joinLeaves: autoDub.joinLeaves,
+      altDancers: autoDub.altDancers,
       eveTalk: autoDub.eveTalk,
       lastLoaded: autoDub.lastLoaded,
       dvm: autoDub.dvm

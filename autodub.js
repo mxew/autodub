@@ -3,7 +3,7 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.25",
+  version: "00.23",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
@@ -143,11 +143,11 @@ autoDub.userLeave = function(data){
 autoDub.idmode = {
   discoball: {
     create: function() {
-      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(http://i.imgur.com/Rv4Wbi5.gif) no-repeat center bottom; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
+      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(http://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
       if (!autoDub.altDancers){
-        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(http://i.imgur.com/0j8fyY1.gif); width:179px; height:179px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(http://i.imgur.com/0j8fyY1.gif); width:179px; height:179px;\"></div><div style=\"clear:both;\"></div></div>");
+        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       } else {
-      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(http://i.imgur.com/0j8fyY1.gif); width:179px; height:179px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(http://i.imgur.com/0j8fyY1.gif); width:179px; height:179px;\"></div><div style=\"clear:both;\"></div></div>");
+      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       }
     },
     up: function() {
@@ -365,14 +365,14 @@ autoDub.altDToggle = function(){
   var label = "off";
   if (autoDub.altDancers){
     autoDub.altDancers = false;
-  $( ".dncr").css( "width", "179px" );
-  $( ".dncr" ).css( "background-image", "url(http://i.imgur.com/0j8fyY1.gif)" );
+  $( ".dncr").css( "width", "59px" );
+  $( ".dncr" ).css( "background-image", "url(https://i.imgur.com/IieFNhZ.gif)" );
 
   } else {
     label = "on";
     autoDub.altDancers = true;
-  $( ".dncr").css( "width", "179px" );
-  $( ".dncr" ).css( "background-image", "url(http://i.imgur.com/0j8fyY1.gif)" );
+  $( ".dncr").css( "width", "88px" );
+  $( ".dncr" ).css( "background-image", "url(https://i.imgur.com/aeOoQTZ.gif)" );
   }
   autoDub.storage.save();
   $("#autoDubaltd").text(label);
@@ -426,4 +426,3 @@ autoDub.storage = {
 };
 
 if (!autoDub.started) autoDub.init();
-

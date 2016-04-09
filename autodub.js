@@ -3,14 +3,15 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.23",
-  whatsNew: "",
+  version: "00.24",
+  whatsNew: "Have you ever wanted to look at your queue and also chat at the same time? Now you can! IF YOU WANT TO NOT DO THAT THAT EVER AT ALL, you can turn this feature off in the left sidebar where I throw all of the other AutoDub settings. OK thanks.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
   altDancers: false,
   songtimer: null,
   eveTalk: false,
+  queueThanks: true,
   firstTalk: false,
   dvm: true,
   users: {},
@@ -265,7 +266,7 @@ if (autoDub.eveTalk) et = "on";
 };
 
 autoDub.ui = {
-  init: function(mode, jl, dv) {
+  init: function(mode, jl, dv, qt) {
     var themode = autoDub.mode;
     if (mode) themode = mode;
     autoDub.roomCheck = setInterval(function() {
@@ -275,7 +276,9 @@ autoDub.ui = {
         autoDub.roomCheck = null;
       }
     }, 2000);
-
+    if (qt) {
+      $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","55%");});
+    }
     var jlm = "off";
     if (jl){
       jlm = "on";
@@ -288,10 +291,17 @@ autoDub.ui = {
     } else if (autoDub.dvm){
       dvm = "on";
     }
+ var qtm = "off";
+    if (qt){
+      qtm = "on";
+    } else if (autoDub.queueThanks){
+      dvm = "on";
+    }
 
     $("#main-menu-left").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">AutoDub</span> <span style=\"float:right;\" id=\"autoDubTimer\"></span></a>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave: <span id=\"autoDubjlm\">"+jlm+"</span>");
     $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert: <span id=\"autoDubdvm\">"+dvm+"</span>");
+    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat: <span id=\"autoDubqt\">"+qtm+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -346,6 +356,20 @@ autoDub.dvmToggle = function(){
   }
   autoDub.storage.save();
   $("#autoDubdvm").text(label);
+};
+
+autoDub.qtToggle = function(){
+  var label = "off";
+  if (autoDub.queueThanks){
+    autoDub.queueThanks = false;
+         $("#browser").css("width","100%");
+  } else {
+    label = "on";
+    autoDub.queueThanks = true;
+          $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","55%");});
+  }
+  autoDub.storage.save();
+  $("#autoDubqt").text(label);
 };
 
 autoDub.etToggle = function(){
@@ -403,6 +427,7 @@ autoDub.storage = {
       joinLeaves: autoDub.joinLeaves,
       altDancers: autoDub.altDancers,
       eveTalk: autoDub.eveTalk,
+      queueThanks: autoDub.queueThanks,
       lastLoaded: autoDub.lastLoaded,
       dvm: autoDub.dvm
     };
@@ -420,8 +445,12 @@ autoDub.storage = {
     var preferences = JSON.parse(favorite);
     $.extend(autoDub, preferences);
     var jl = false;
-    if (preferences.joinLeaves) jl = preferences.joinLeaves;
-    autoDub.ui.init(preferences.mode, jl);
+    var qt = true;
+    var dv = true;
+    if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
+    if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks; 
+    if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
+    autoDub.ui.init(preferences.mode, jl, dv, qt);
   }
 };
 

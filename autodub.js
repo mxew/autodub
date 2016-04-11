@@ -3,7 +3,7 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.24",
+  version: "00.26",
   whatsNew: "Have you ever wanted to look at your queue and also chat at the same time? Now you can! IF YOU WANT TO NOT DO THAT THAT EVER AT ALL, you can turn this feature off in the left sidebar where I throw all of the other AutoDub settings. OK thanks.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
@@ -277,7 +277,7 @@ autoDub.ui = {
       }
     }, 2000);
     if (qt) {
-      $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","55%");});
+      $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("margin-bottom","55px");$("#browser").css("width","50%");});
     }
     var jlm = "off";
     if (jl){
@@ -319,13 +319,16 @@ autoDub.ui = {
           left: mousex
         })
     });
-    if (window.location.href.match(/\/join\/indie-discotheque/)) {
+          setTimeout(function() {
+
+    if (Dubtrack.room.model.id == "55f82ef944809b0300f88695") {
       $(".right_section").prepend("<div id=\"discobal\" style=\"position: absolute; margin-top: -20px; font-size: 14px;\">Loading your Discocheque balance...</div>");
       autoDub.idmode.discoball.create();
       setTimeout(function() {
         autoDub.idmode.init();
       }, 1000);
     }
+         }, 2000);
     $("#chat-txt-message").attr('maxlength', 140);
   },
   toolTips: function() {
@@ -363,10 +366,11 @@ autoDub.qtToggle = function(){
   if (autoDub.queueThanks){
     autoDub.queueThanks = false;
          $("#browser").css("width","100%");
+         $("#browser").css("margin-bottom","0px");
   } else {
     label = "on";
     autoDub.queueThanks = true;
-          $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","55%");});
+          $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("margin-bottom","55px");$("#browser").css("width","50%");});
   }
   autoDub.storage.save();
   $("#autoDubqt").text(label);

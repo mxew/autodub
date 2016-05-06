@@ -4,7 +4,7 @@ var autoDub = {
   started: false,
   mode: "classic",
   version: "00.26",
-  whatsNew: "Have you ever wanted to look at your queue and also chat at the same time? Now you can! IF YOU WANT TO NOT DO THAT THAT EVER AT ALL, you can turn this feature off in the left sidebar where I throw all of the other AutoDub settings. OK thanks.",
+  whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,

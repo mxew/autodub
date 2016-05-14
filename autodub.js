@@ -3,7 +3,7 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.26",
+  version: "00.27",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
@@ -84,6 +84,27 @@ autoDub.newSong = function(data) {
 
 autoDub.newChat = function(data) {
   var id = data.chatid;
+  var uid = data.user._id;
+  var msg = data.message;
+  if (uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i)){
+    if (Notification){
+      if (Notification.permission !== "granted")
+    Notification.requestPermission();
+  else {
+    var notification = new Notification('AutoDub', {
+      icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+      body: "Quack Quack...",
+    });
+
+ notification.onclick = function () {
+        Dubtrack.room.chat._messageInputEl.val("!shootduck");
+  Dubtrack.room.chat.sendMessage();
+    };
+    
+  }
+
+    }
+  }
   if (autoDub.idmode.userid && autoDub.idmode.arnold){
     setTimeout(function(){
       $(".chat-id-" + id).find(".cursor-pointer").attr("src", "http://i.imgur.com/1AME7v3.png");
@@ -171,6 +192,9 @@ autoDub.idmode = {
   theRoomShit: null,
   userid: null,
   init: function() {
+     if (Notification.permission !== "granted"){
+    Notification.requestPermission();
+}
     autoDub.idmode.getName();
   },
   getUserId: function(username) {

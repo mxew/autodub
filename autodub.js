@@ -3,7 +3,7 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.27",
+  version: "00.28",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
@@ -235,6 +235,40 @@ if (autoDub.eveTalk) et = "on";
   $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk: <span id=\"autoDubet\">"+et+"</span>");
    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer: <span id=\"autoDubaltd\">"+altD+"</span>");
 
+$( "<div style=\"padding-bottom: 56.25%; position: relative; z-index: 5;\" id=\"noumBoard\"><div style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow: hidden; padding: 0 16px 0 0; padding: 0 1rem 0 0;\">ALLLLLLL OF THE INFO</div></div>" ).insertAfter( "#room-info-display" );
+
+$(".player_header").append("<span id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">AD</span>");
+
+
+
+
+$("#room-info-display").css("display","none");
+
+$("#mods-controllers").css("display","none");
+$("#player_container").css("display","none");
+$("#room-info-display").css("display","none");
+
+$("#noumBoard").css("display","none");
+
+autoDub.noumBoard = function(){
+  $( ".player_header" ).find( ".active" ).removeClass( "active" );
+  $( "#buttonThingThanks2" ).addClass( "active" );
+  $("#room-info-display").css("display","none");
+  $("#mods-controllers").css("display","none");
+  $(".player_container").css("display","none");
+  $("#noumBoard").css("display","block");
+};
+$( ".displayVideo-el" ).click(function() {
+    $("#noumBoard").css("display","none");
+
+});
+$( ".room-info-display" ).click(function() {
+    $("#noumBoard").css("display","none");
+});
+
+$( ".display-mods-controls" ).click(function() {
+    $("#noumBoard").css("display","none");
+});
 
   },
   eveTalkr: function(snapshot){

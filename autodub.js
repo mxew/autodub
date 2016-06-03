@@ -3,8 +3,8 @@ if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already load
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.28",
-  whatsNew: "",
+  version: "00.30",
+  whatsNew: "Hey there! We moved all AutoDub settings to the new 'AUTODUB' tab up above the video box.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
   lastLoaded: null,
   roomCheck: null,
@@ -75,7 +75,7 @@ autoDub.newSong = function(data) {
     autoDub.songtimer = setTimeout(function() {
       autoDub.songtimer = null;
       $("#autoDubTimer").countdown("destroy");
-      $("#autoDubTimer").text("");
+      $("#autoDubTimer").text("voted");
       $(".dubup").click();
       console.log("voted.");
     }, thetimer);
@@ -136,7 +136,6 @@ autoDub.init = function() {
   script.type = 'text/javascript';
   script.src = 'https://autodub.firebaseapp.com/jquery.countdown.min.js';
   document.body.appendChild(script);
-  autoDub.storage.restore();
   Dubtrack.Events.bind("realtime:room_playlist-update", autoDub.newSong);
   Dubtrack.Events.bind("realtime:user-leave", autoDub.userLeave);
   Dubtrack.Events.bind("realtime:user-join", autoDub.userJoin);
@@ -144,6 +143,43 @@ autoDub.init = function() {
   Dubtrack.Events.bind("realtime:chat-message", autoDub.newChat);
   $(".dubup").click();
   console.log("autodub v" + autoDub.version + " is a go!");
+  $( "<style>.adbsettings a{display:block;border-bottom:1px solid #eee;}</style>" ).appendTo( "head" );
+  $( "<div style=\"padding-bottom: 56.25%; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:25px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v"+autoDub.version+"</div><div style=\"font-weight:700;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>" ).insertAfter( "#room-info-display" );
+
+$(".player_header").append("<span id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">AutoDub</span>");
+
+
+
+
+$("#room-info-display").css("display","none");
+
+$("#mods-controllers").css("display","none");
+$("#player_container").css("display","none");
+$("#room-info-display").css("display","none");
+
+$("#noumBoard").css("display","none");
+
+autoDub.noumBoard = function(){
+  $( ".player_header" ).find( ".active" ).removeClass( "active" );
+  $( "#buttonThingThanks2" ).addClass( "active" );
+  $("#room-info-display").css("display","none");
+  $("#mods-controllers").css("display","none");
+  $(".player_container").css("display","none");
+  $("#noumBoard").css("display","block");
+};
+$( ".displayVideo-el" ).click(function() {
+    $("#noumBoard").css("display","none");
+
+});
+$( ".room-info-display" ).click(function() {
+    $("#noumBoard").css("display","none");
+});
+
+$( ".display-mods-controls" ).click(function() {
+    $("#noumBoard").css("display","none");
+});
+  autoDub.storage.restore();
+
 };
 
 autoDub.userJoin = function(data){
@@ -231,44 +267,11 @@ var et = "off";
 var altD = "off";
 if (autoDub.altDancers) altD = "on";
 if (autoDub.eveTalk) et = "on";
-
-  $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk: <span id=\"autoDubet\">"+et+"</span>");
-   $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer: <span id=\"autoDubaltd\">"+altD+"</span>");
-
-$( "<div style=\"padding-bottom: 56.25%; position: relative; z-index: 5;\" id=\"noumBoard\"><div style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow: hidden; padding: 0 16px 0 0; padding: 0 1rem 0 0;\">ALLLLLLL OF THE INFO</div></div>" ).insertAfter( "#room-info-display" );
-
-$(".player_header").append("<span id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">AD</span>");
+$("#noumcon").append("<div style=\"font-weight:700; margin-top:20px;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
+  $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right;\" id=\"autoDubet\">"+et+"</span>");
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right;\" id=\"autoDubaltd\">"+altD+"</span>");
 
 
-
-
-$("#room-info-display").css("display","none");
-
-$("#mods-controllers").css("display","none");
-$("#player_container").css("display","none");
-$("#room-info-display").css("display","none");
-
-$("#noumBoard").css("display","none");
-
-autoDub.noumBoard = function(){
-  $( ".player_header" ).find( ".active" ).removeClass( "active" );
-  $( "#buttonThingThanks2" ).addClass( "active" );
-  $("#room-info-display").css("display","none");
-  $("#mods-controllers").css("display","none");
-  $(".player_container").css("display","none");
-  $("#noumBoard").css("display","block");
-};
-$( ".displayVideo-el" ).click(function() {
-    $("#noumBoard").css("display","none");
-
-});
-$( ".room-info-display" ).click(function() {
-    $("#noumBoard").css("display","none");
-});
-
-$( ".display-mods-controls" ).click(function() {
-    $("#noumBoard").css("display","none");
-});
 
   },
   eveTalkr: function(snapshot){
@@ -356,10 +359,10 @@ autoDub.ui = {
       dvm = "on";
     }
 
-    $("#main-menu-left").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">AutoDub</span> <span style=\"float:right;\" id=\"autoDubTimer\"></span></a>");
-    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave: <span id=\"autoDubjlm\">"+jlm+"</span>");
-    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert: <span id=\"autoDubdvm\">"+dvm+"</span>");
-    $("#main-menu-left").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat: <span id=\"autoDubqt\">"+qtm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right;\" id=\"autoDubTimer\">voted</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right;\" id=\"autoDubjlm\">"+jlm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right;\" id=\"autoDubdvm\">"+dvm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right;\" id=\"autoDubqt\">"+qtm+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -472,7 +475,7 @@ autoDub.newVote = function(data) {
       clearTimeout(autoDub.songtimer);
       autoDub.songtimer = null;
       $("#autoDubTimer").countdown("destroy");
-      $("#autoDubTimer").text("");
+      $("#autoDubTimer").text("voted");
       console.log("autovote off until next song.");
     }
   }

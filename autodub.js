@@ -5,7 +5,7 @@ var autoDub = {
   mode: "classic",
   version: "00.30",
   whatsNew: "Hey there! We moved all AutoDub settings to the new 'AUTODUB' tab up above the video box.",
-  firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the left dubtrack menu.",
+  firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
   altDancers: false,

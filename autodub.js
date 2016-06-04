@@ -519,4 +519,4 @@ autoDub.storage = {
   }
 };
 
-if (!autoDub.started) autoDub.init();
+autoDub.init();

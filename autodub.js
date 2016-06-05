@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.31",
+  version: "00.32",
   whatsNew: "Hey there! We moved all AutoDub settings to the new 'AUTODUB' tab up above the video box.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -128,6 +128,8 @@ autoDub.chatSpam = {
 };
 
 autoDub.init = function() {
+    console.log("enter init");
+
   autoDub.started = true;
   var script = document.createElement('script');
   script.id = 'aptimer';
@@ -139,32 +141,17 @@ autoDub.init = function() {
   Dubtrack.Events.bind("realtime:user-join", autoDub.userJoin);
   Dubtrack.Events.bind("realtime:room_playlist-dub", autoDub.newVote);
   Dubtrack.Events.bind("realtime:chat-message", autoDub.newChat);
-  $(".dubup").click();
+      console.log("events binded");
+
+ // $(".dubup").click();
+
   console.log("autodub v" + autoDub.version + " is a go!");
   $( "<style>.adbsettings a{display:block;border-bottom:1px solid #eee;}</style>" ).appendTo( "head" );
-  $( "<div style=\"padding-bottom: 56.25%; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:25px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v"+autoDub.version+"</div><div style=\"font-weight:700;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>" ).insertAfter( "#room-info-display" );
+  $( "<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:25px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v"+autoDub.version+"</div><div style=\"font-weight:700;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>" ).insertAfter( "#room-info-display" );
 
 $(".player_header").append("<span id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">AutoDub</span>");
 
 
-
-
-$("#room-info-display").css("display","none");
-
-$("#mods-controllers").css("display","none");
-$("#player_container").css("display","none");
-$("#room-info-display").css("display","none");
-
-$("#noumBoard").css("display","none");
-
-autoDub.noumBoard = function(){
-  $( ".player_header" ).find( ".active" ).removeClass( "active" );
-  $( "#buttonThingThanks2" ).addClass( "active" );
-  $("#room-info-display").css("display","none");
-  $("#mods-controllers").css("display","none");
-  $(".player_container").css("display","none");
-  $("#noumBoard").css("display","block");
-};
 $( ".displayVideo-el" ).click(function() {
     $("#noumBoard").css("display","none");
 
@@ -177,7 +164,17 @@ $( ".display-mods-controls" ).click(function() {
     $("#noumBoard").css("display","none");
 });
   autoDub.storage.restore();
+    console.log("exit init");
 
+};
+
+autoDub.noumBoard = function(){
+  $( ".player_header" ).find( ".active" ).removeClass( "active" );
+  $( "#buttonThingThanks2" ).addClass( "active" );
+  $("#room-info-display").css("display","none");
+  $("#mods-controllers").css("display","none");
+  $(".player_container").css("display","none");
+  $("#noumBoard").css("display","block");
 };
 
 autoDub.userJoin = function(data){

@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.33",
+  version: "00.34",
   whatsNew: "Hey there! We moved all AutoDub settings to the new 'AUTODUB' tab up above the video box.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -219,7 +219,9 @@ autoDub.idmode = {
   onValueChange: null,
   onWordChange: null,
   onDiscoballChange: null,
+  onShirt: null,
   theBank: null,
+  shirt: null,
   theRoomShit: null,
   userid: null,
   init: function() {
@@ -248,9 +250,13 @@ autoDub.idmode = {
     autoDub.idmode.fb = new Firebase("https://discocheques.firebaseio.com");
     autoDub.idmode.theBank = autoDub.idmode.fb.child("bank/" + autoDub.idmode.userid);
     autoDub.idmode.theRoomShit = autoDub.idmode.fb.child("roomshit");
+    autoDub.idmode.shirt = autoDub.idmode.fb.child("shirt");
     autoDub.idmode.eveWords = autoDub.idmode.fb.child("evetalk");
     autoDub.idmode.onWordChange = autoDub.idmode.eveWords.on("value", function(snapshot) {
       autoDub.idmode.eveTalkr(snapshot);
+    });
+    autoDub.idmode.onShirt = autoDub.idmode.shirt.on("value", function(snapshot) {
+      autoDub.idmode.shirtChange(snapshot);
     });
     autoDub.idmode.onValueChange = autoDub.idmode.theBank.on("value", function(snapshot) {
       autoDub.idmode.balchange(snapshot);
@@ -281,6 +287,10 @@ $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weig
       }
     }
   }
+  },
+  shirtChange: function(snapshot){
+    var data = snapshot.val();
+    $(".currentSong").html(data.artist+" - "+data.title);
   },
   roomShitChange: function(snapshot) {
     var data = snapshot.val();

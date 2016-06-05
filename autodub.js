@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.32",
+  version: "00.33",
   whatsNew: "Hey there! We moved all AutoDub settings to the new 'AUTODUB' tab up above the video box.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -146,8 +146,8 @@ autoDub.init = function() {
  // $(".dubup").click();
 
   console.log("autodub v" + autoDub.version + " is a go!");
-  $( "<style>.adbsettings a{display:block;border-bottom:1px solid #eee;}</style>" ).appendTo( "head" );
-  $( "<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:25px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v"+autoDub.version+"</div><div style=\"font-weight:700;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>" ).insertAfter( "#room-info-display" );
+  $( "<style>.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}.adbsettings a:last-child { border-bottom:none;}</style>" ).appendTo( "head" );
+  $( "<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:35px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v"+autoDub.version+"</div><div style=\"font-size: 1.1rem; font-weight: 700; text-align: center; text-transform: uppercase;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>" ).insertAfter( "#room-info-display" );
 
 $(".player_header").append("<span id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">AutoDub</span>");
 
@@ -262,9 +262,9 @@ var et = "off";
 var altD = "off";
 if (autoDub.altDancers) altD = "on";
 if (autoDub.eveTalk) et = "on";
-$("#noumcon").append("<div style=\"font-weight:700; margin-top:20px;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
-  $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right;\" id=\"autoDubet\">"+et+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right;\" id=\"autoDubaltd\">"+altD+"</span>");
+$("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
+  $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">"+et+"</span>");
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">"+altD+"</span>");
 
 
 
@@ -354,10 +354,10 @@ autoDub.ui = {
       dvm = "on";
     }
 
-    $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right;\" id=\"autoDubTimer\">voted</span></a>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right;\" id=\"autoDubjlm\">"+jlm+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right;\" id=\"autoDubdvm\">"+dvm+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right;\" id=\"autoDubqt\">"+qtm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">"+jlm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">"+dvm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {

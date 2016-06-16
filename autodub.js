@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.34",
+  version: "00.34c",
   whatsNew: "Hey there! We moved all AutoDub settings to the new 'AUTODUB' tab up above the video box.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -16,7 +16,8 @@ var autoDub = {
   joinLeaves: false,
   userid: null,
   toolTip: null,
-  lastSong: null
+  lastSong: null,
+  desktopNotifications: true,
 };
 
 autoDub.versionMessage = function() {
@@ -81,28 +82,34 @@ autoDub.newSong = function(data) {
 };
 
 autoDub.newChat = function(data) {
-  var id = data.chatid;
-  var uid = data.user._id;
-  var msg = data.message;
-  if (uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i)){
+  if( autoDub.desktopNotifications == true ){
+    var id = data.chatid;
+    var uid = data.user._id;
+    var msg = data.message;
+    var yourStupidName = '@'+$('.user-info span').text();
     if (Notification){
-      if (Notification.permission !== "granted")
-    Notification.requestPermission();
-  else {
-    var notification = new Notification('AutoDub', {
-      icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
-      body: "Quack Quack...",
-    });
+      if (Notification.permission !== "granted"){
+        Notification.requestPermission();
+      }else{
+        if (uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i)){
+          var notification = new Notification('AutoDub', {
+            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            body: "Quack Quack...",
+          }); // notification
+          notification.onclick = function () {
+            Dubtrack.room.chat._messageInputEl.val("!shootduck");
+            Dubtrack.room.chat.sendMessage();
+          }; // notification.onclick
+        }else if( msg.match( yourStupidName ) || msg.match( yourStupidName.toLowerCase() ) ){
+          var notification = new Notification('AutoDub', {
+            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            body: msg,
+          }); // notification
+        }
+      } // else
+    } // Notification
+  } // if desktopNotifications
 
- notification.onclick = function () {
-        Dubtrack.room.chat._messageInputEl.val("!shootduck");
-  Dubtrack.room.chat.sendMessage();
-    };
-    
-  }
-
-    }
-  }
   if (autoDub.idmode.userid && autoDub.idmode.arnold){
     setTimeout(function(){
       $(".chat-id-" + id).find(".cursor-pointer").attr("src", "http://i.imgur.com/1AME7v3.png");
@@ -364,10 +371,18 @@ autoDub.ui = {
       dvm = "on";
     }
 
+    var desktopNotificationStatus = 'off';
+    if( autoDub.desktopNotifications == true ){
+      desktopNotificationStatus = 'on';
+    }else{
+      desktopNotificationStatus = 'off';
+    }
+
     $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">"+jlm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">"+dvm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\">Desktop @ mentions <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">"+desktopNotificationStatus+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -414,6 +429,19 @@ autoDub.jlmToggle = function(){
   autoDub.storage.save();
   $("#autoDubjlm").text(label);
 };
+
+autoDub.toggleDeskNotStat = function(){
+  var label = 'off';
+  if( autoDub.desktopNotifications ){
+    autoDub.desktopNotifications = false;
+    label = 'off';
+  }else{
+    label = 'on';
+    autoDub.desktopNotifications = true;
+  }
+  autoDub.storage.save();
+  $("#desktopNotificationStatus").text(label);
+}
 
 autoDub.dvmToggle = function(){
   var label = "off";
@@ -499,7 +527,8 @@ autoDub.storage = {
       eveTalk: autoDub.eveTalk,
       queueThanks: autoDub.queueThanks,
       lastLoaded: autoDub.lastLoaded,
-      dvm: autoDub.dvm
+      dvm: autoDub.dvm,
+      desktopNotifications: autoDub.desktopNotifications,
     };
     var preferences = JSON.stringify(save_file);
     localStorage["autoDub"] = preferences;
@@ -518,7 +547,7 @@ autoDub.storage = {
     var qt = true;
     var dv = true;
     if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
-    if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks; 
+    if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
     autoDub.ui.init(preferences.mode, jl, dv, qt);
   }

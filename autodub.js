@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.38",
-  whatsNew: "",
+  version: "00.39",
+  whatsNew: "Desktop noticications for @user messages! On by default, but can be turned off in AutoDub settings!",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -86,6 +86,7 @@ autoDub.newSong = function(data) {
 autoDub.newChat = function(data) {
   var id = data.chatid;
   var uid = data.user._id;
+  var name = data.user.username;
   var msg = data.message;
   if( autoDub.shootDucks == true ){
     if (Notification){
@@ -94,7 +95,7 @@ autoDub.newChat = function(data) {
       }else{
         if ( uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i) ){
           var ducknotification = new Notification('AutoDub', {
-            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            icon: 'https://i.imgur.com/1huAkzf.png',
             body: "Quack Quack...",
           }); // notification
           ducknotification.onclick = function () {
@@ -103,12 +104,12 @@ autoDub.newChat = function(data) {
           }; // notification.onclick
         }else if( uid == "560164dd2e803803000fffb6" && msg.match( /nice\! you felled a/ ) ){
           var duckdeadnotification = new Notification('AutoDub', {
-            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            icon: 'https://i.imgur.com/1huAkzf.png',
             body: "THE DUCKY LOST.",
           }); // notification
         }else if( uid == "560164dd2e803803000fffb6" && msg.match( /DUCK FLEW AWAY\!/ ) ){
           var duckdeadnotification = new Notification('AutoDub', {
-            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            icon: 'https://i.imgur.com/1huAkzf.png',
             body: "DUCK FLEW AWAY!",
           }); // notification
         }
@@ -122,8 +123,8 @@ autoDub.newChat = function(data) {
         Notification.requestPermission();
       }else{
         if( msg.match( yourStupidName, 'i' ) || msg.match( /\@everyone/ ) ){
-          var notification = new Notification('AutoDub', {
-            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+          var notification = new Notification(name, {
+            icon: 'https://api.dubtrack.fm/user/'+uid+'/image',
             body: msg,
           }); // notification
         }

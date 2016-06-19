@@ -16,7 +16,10 @@ var autoDub = {
   joinLeaves: false,
   userid: null,
   toolTip: null,
-  lastSong: null
+  lastSong: null,
+  desktopNotifications: true,
+  shootDucks: true,
+  workMode: false,
 };
 
 autoDub.versionMessage = function() {
@@ -84,25 +87,50 @@ autoDub.newChat = function(data) {
   var id = data.chatid;
   var uid = data.user._id;
   var msg = data.message;
-  if (uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i)){
+  if( autoDub.shootDucks == true ){
     if (Notification){
-      if (Notification.permission !== "granted")
-    Notification.requestPermission();
-  else {
-    var notification = new Notification('AutoDub', {
-      icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
-      body: "Quack Quack...",
-    });
-
- notification.onclick = function () {
-        Dubtrack.room.chat._messageInputEl.val("!shootduck");
-  Dubtrack.room.chat.sendMessage();
-    };
-    
+      if (Notification.permission !== "granted"){
+        Notification.requestPermission();
+      }else{
+        if ( uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i) ){
+          var ducknotification = new Notification('AutoDub', {
+            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            body: "Quack Quack...",
+          }); // notification
+          ducknotification.onclick = function () {
+            Dubtrack.room.chat._messageInputEl.val("!shootduck");
+            Dubtrack.room.chat.sendMessage();
+          }; // notification.onclick
+        }else if( uid == "560164dd2e803803000fffb6" && msg.match( /nice\! you felled a/ ) ){
+          var duckdeadnotification = new Notification('AutoDub', {
+            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            body: "THE DUCKY LOST.",
+          }); // notification
+        }else if( uid == "560164dd2e803803000fffb6" && msg.match( /DUCK FLEW AWAY\!/ ) ){
+          var duckdeadnotification = new Notification('AutoDub', {
+            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            body: "DUCK FLEW AWAY!",
+          }); // notification
+        }
+      } // else
+    } // Notification
   }
+  if( autoDub.desktopNotifications == true ){
+    var yourStupidName = '@'+$('.user-info span').text();
+    if (Notification){
+      if (Notification.permission !== "granted"){
+        Notification.requestPermission();
+      }else{
+        if( msg.match( yourStupidName, 'i' ) || msg.match( /\@everyone/ ) ){
+          var notification = new Notification('AutoDub', {
+            icon: 'http://howtojointheindiediscothequewaitlist.com/autodub/adlogo.png',
+            body: msg,
+          }); // notification
+        }
+      } // else
+    } // Notification
+  } // if desktopNotifications
 
-    }
-  }
   if (autoDub.idmode.userid && autoDub.idmode.arnold){
     setTimeout(function(){
       $(".chat-id-" + id).find(".cursor-pointer").attr("src", "https://i.imgur.com/1AME7v3.png");
@@ -196,11 +224,18 @@ autoDub.userLeave = function(data){
 autoDub.idmode = {
   discoball: {
     create: function() {
-      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: block; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
+      if( autoDub.workMode ){
+        var discoballdisplay = 'none';
+        var dancersheight = '0';
+      }else{
+        var discoballdisplay = 'block';
+        var dancersheight = '130px';
+      }
+      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: "+discoballdisplay+"; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
       if (!autoDub.altDancers){
-        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:"+dancersheight+"; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       } else {
-      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:130px; z-index:120; margin-top:-180px;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:"+dancersheight+"; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       }
     },
     up: function() {
@@ -266,12 +301,17 @@ autoDub.idmode = {
     });
 var et = "off";
 var altD = "off";
+var ducksOpt = "off";
+var workmodeOpt = "off";
 if (autoDub.altDancers) altD = "on";
 if (autoDub.eveTalk) et = "on";
+if( autoDub.shootDucks ) ducksOpt = "on";
+if( autoDub.workMode ) workmodeOpt = "on"
 $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">"+et+"</span>");
    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">"+altD+"</span>");
-
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\" title=\"Show desktop notifications for duck hunting\">Ducks <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">"+ducksOpt+"</span>");
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.workmodeToggle()\" class=\"autodub-workmodelink\" title=\"Disables the discoball and dancers entirely\">Work Mode <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubworkmode\">"+workmodeOpt+"</span>");
 
 
   },
@@ -361,13 +401,21 @@ autoDub.ui = {
     if (qt){
       qtm = "on";
     } else if (autoDub.queueThanks){
-      dvm = "on";
+      qtm = "on";
+    }
+
+    var desktopNotificationStatus = 'off';
+    if( autoDub.desktopNotifications == true ){
+      desktopNotificationStatus = 'on';
+    }else{
+      desktopNotificationStatus = 'off';
     }
 
     $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">"+jlm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">"+dvm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">"+desktopNotificationStatus+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -420,6 +468,19 @@ autoDub.jlmToggle = function(){
   autoDub.storage.save();
   $("#autoDubjlm").text(label);
 };
+
+autoDub.toggleDeskNotStat = function(){
+  var label = 'off';
+  if( autoDub.desktopNotifications ){
+    autoDub.desktopNotifications = false;
+    label = 'off';
+  }else{
+    label = 'on';
+    autoDub.desktopNotifications = true;
+  }
+  autoDub.storage.save();
+  $("#desktopNotificationStatus").text(label);
+}
 
 autoDub.dvmToggle = function(){
   var label = "off";
@@ -478,6 +539,34 @@ autoDub.altDToggle = function(){
   $("#autoDubaltd").text(label);
 };
 
+autoDub.ducksToggle = function(){
+  var label = "off";
+  if (autoDub.shootDucks){
+    autoDub.shootDucks = false;
+  } else {
+    label = "on";
+    autoDub.shootDucks = true;
+  }
+  autoDub.storage.save();
+  $("#autoDubducks").text(label);
+};
+
+autoDub.workmodeToggle = function(){
+  var label = "off";
+  if (autoDub.workMode){
+    autoDub.workMode = false;
+    document.getElementById('discoball').style.display = 'block';
+    document.getElementById('dancers').style.height = '130px';
+  } else {
+    label = "on";
+    autoDub.workMode = true;
+    document.getElementById('discoball').style.display = 'none';
+    document.getElementById('dancers').style.height = '0';
+  }
+  autoDub.storage.save();
+  $("#autoDubworkmode").text(label);
+};
+
 autoDub.newVote = function(data) {
   var username = $(".user-info").first().text();
   if (data.user.username == username) {
@@ -505,7 +594,10 @@ autoDub.storage = {
       eveTalk: autoDub.eveTalk,
       queueThanks: autoDub.queueThanks,
       lastLoaded: autoDub.lastLoaded,
-      dvm: autoDub.dvm
+      dvm: autoDub.dvm,
+      desktopNotifications: autoDub.desktopNotifications,
+      shootDucks: autoDub.shootDucks,
+      workMode: autoDub.workMode,
     };
     var preferences = JSON.stringify(save_file);
     localStorage["autoDub"] = preferences;
@@ -524,7 +616,7 @@ autoDub.storage = {
     var qt = true;
     var dv = true;
     if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
-    if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks; 
+    if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
     autoDub.ui.init(preferences.mode, jl, dv, qt);
   }

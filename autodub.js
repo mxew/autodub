@@ -89,28 +89,32 @@ autoDub.newChat = function(data) {
   var name = data.user.username;
   var msg = data.message;
   if( autoDub.shootDucks == true ){
+    ducktimematch = /Quack quack../i;
+    deadduckmatch = /(?:^|\s)(.*?) nice\!(.*?)have a (.*?)(?:^|\s)discocheque reward\./i;
     if (Notification){
       if (Notification.permission !== "granted"){
         Notification.requestPermission();
       }else{
-        if ( uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i) ){
-          var ducknotification = new Notification('AutoDub', {
+        if ( uid == "560164dd2e803803000fffb6" && msg.match( ducktimematch ) ){
+          var ducknotification = new Notification('Quack quack...', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "Quack Quack...",
+            body: "・゜ ​ ゜・。。・゜゜\_ö<",
           }); // notification
           ducknotification.onclick = function () {
             Dubtrack.room.chat._messageInputEl.val("!shootduck");
             Dubtrack.room.chat.sendMessage();
           }; // notification.onclick
-        }else if( uid == "560164dd2e803803000fffb6" && msg.match( /nice\! you felled a/ ) ){
-          var duckdeadnotification = new Notification('AutoDub', {
+        }else if( uid == "560164dd2e803803000fffb6" && msg.match( deadduckmatch ) ){
+          var deadduckinfo = deadduckmatch.exec( msg );
+          var bodycopy = deadduckinfo[1] + " +" + deadduckinfo[3] + " DCs. Yay!";
+          var duckdeadnotification = new Notification('THE DUCKY LOST.', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "THE DUCKY LOST.",
+            body: bodycopy,
           }); // notification
         }else if( uid == "560164dd2e803803000fffb6" && msg.match( /DUCK FLEW AWAY\!/ ) ){
-          var duckdeadnotification = new Notification('AutoDub', {
+          var duckdeadnotification = new Notification('DUCK FLEW AWAY!', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "DUCK FLEW AWAY!",
+            body: "wah wah waaaah",
           }); // notification
         }
       } // else

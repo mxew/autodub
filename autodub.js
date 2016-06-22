@@ -19,7 +19,7 @@ var autoDub = {
   lastSong: null,
   desktopNotifications: true,
   shootDucks: true,
-  workMode: false,
+  discoballDancers: true,
 };
 
 autoDub.versionMessage = function() {
@@ -89,28 +89,32 @@ autoDub.newChat = function(data) {
   var name = data.user.username;
   var msg = data.message;
   if( autoDub.shootDucks == true ){
+    ducktimematch = /Quack quack../i;
+    deadduckmatch = /(?:^|\s)(.*?) nice\!(.*?)have a (.*?)(?:^|\s)discocheque reward\./i;
     if (Notification){
       if (Notification.permission !== "granted"){
         Notification.requestPermission();
       }else{
-        if ( uid == "560164dd2e803803000fffb6" && msg.match(/Quack quack../i) ){
-          var ducknotification = new Notification('AutoDub', {
+        if ( uid == "560164dd2e803803000fffb6" && msg.match( ducktimematch ) ){
+          var ducknotification = new Notification('Quack quack...', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "Quack Quack...",
+            body: "・゜ ​ ゜・。。・゜゜\_ö<",
           }); // notification
           ducknotification.onclick = function () {
             Dubtrack.room.chat._messageInputEl.val("!shootduck");
             Dubtrack.room.chat.sendMessage();
           }; // notification.onclick
-        }else if( uid == "560164dd2e803803000fffb6" && msg.match( /nice\! you felled a/ ) ){
-          var duckdeadnotification = new Notification('AutoDub', {
+        }else if( uid == "560164dd2e803803000fffb6" && msg.match( deadduckmatch ) ){
+          var deadduckinfo = deadduckmatch.exec( msg );
+          var bodycopy = deadduckinfo[1] + " +" + deadduckinfo[3] + " DCs. Yay!";
+          var duckdeadnotification = new Notification('THE DUCKY LOST.', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "THE DUCKY LOST.",
+            body: bodycopy,
           }); // notification
         }else if( uid == "560164dd2e803803000fffb6" && msg.match( /DUCK FLEW AWAY\!/ ) ){
-          var duckdeadnotification = new Notification('AutoDub', {
+          var duckdeadnotification = new Notification('DUCK FLEW AWAY!', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "DUCK FLEW AWAY!",
+            body: "wah wah waaaah",
           }); // notification
         }
       } // else
@@ -225,12 +229,12 @@ autoDub.userLeave = function(data){
 autoDub.idmode = {
   discoball: {
     create: function() {
-      if( autoDub.workMode ){
-        var discoballdisplay = 'none';
-        var dancersheight = '0';
-      }else{
+      if( autoDub.discoballDancers ){
         var discoballdisplay = 'block';
         var dancersheight = '130px';
+      }else{
+        var discoballdisplay = 'none';
+        var dancersheight = '0';
       }
       $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: "+discoballdisplay+"; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
       if (!autoDub.altDancers){
@@ -303,16 +307,16 @@ autoDub.idmode = {
 var et = "off";
 var altD = "off";
 var ducksOpt = "off";
-var workmodeOpt = "off";
+var discoballdancersOpt = "off";
 if (autoDub.altDancers) altD = "on";
 if (autoDub.eveTalk) et = "on";
 if( autoDub.shootDucks ) ducksOpt = "on";
-if( autoDub.workMode ) workmodeOpt = "on"
+if( autoDub.discoballDancers ) discoballdancersOpt = "on"
 $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">"+et+"</span>");
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.discoballdancersToggle()\" class=\"autodub-discoballdancerslink\" title=\"Disables the discoball and dancers entirely\">Discoball/Dancers <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdiscoballdancers\">"+discoballdancersOpt+"</span>");
    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">"+altD+"</span>");
    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\" title=\"Show desktop notifications for duck hunting\">Ducks <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">"+ducksOpt+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.workmodeToggle()\" class=\"autodub-workmodelink\" title=\"Disables the discoball and dancers entirely\">Work Mode <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubworkmode\">"+workmodeOpt+"</span>");
 
 
   },
@@ -552,20 +556,20 @@ autoDub.ducksToggle = function(){
   $("#autoDubducks").text(label);
 };
 
-autoDub.workmodeToggle = function(){
+autoDub.discoballdancersToggle = function(){
   var label = "off";
-  if (autoDub.workMode){
-    autoDub.workMode = false;
-    document.getElementById('discoball').style.display = 'block';
-    document.getElementById('dancers').style.height = '130px';
-  } else {
-    label = "on";
-    autoDub.workMode = true;
+  if (autoDub.discoballDancers){
+    autoDub.discoballDancers = false;
     document.getElementById('discoball').style.display = 'none';
     document.getElementById('dancers').style.height = '0';
+  } else {
+    label = "on";
+    autoDub.discoballDancers = true;
+    document.getElementById('discoball').style.display = 'block';
+    document.getElementById('dancers').style.height = '130px';
   }
   autoDub.storage.save();
-  $("#autoDubworkmode").text(label);
+  $("#autoDubdiscoballdancers").text(label);
 };
 
 autoDub.newVote = function(data) {
@@ -598,7 +602,7 @@ autoDub.storage = {
       dvm: autoDub.dvm,
       desktopNotifications: autoDub.desktopNotifications,
       shootDucks: autoDub.shootDucks,
-      workMode: autoDub.workMode,
+      discoballDancers: autoDub.discoballDancers,
     };
     var preferences = JSON.stringify(save_file);
     localStorage["autoDub"] = preferences;

@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.40",
+  version: "00.41",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -10,6 +10,7 @@ var autoDub = {
   songtimer: null,
   eveTalk: false,
   queueThanks: true,
+  pmPlus: false,
   firstTalk: false,
   dvm: true,
   users: {},
@@ -160,6 +161,229 @@ autoDub.chatSpam = {
   }
 };
 
+autoDub.closePM = function(id){
+    $("#sneakText"+id).unbind("keypress");
+
+    $("#sneakybox"+id).remove();
+
+};
+autoDub.makeConvo = function(userid,coolName){
+  if ($(".pmbox"+coolName).length) return;
+ var nicedata = 'usersid%5B%5D=' +userid;
+
+
+                        $.ajax({
+                        url: 'https://api.dubtrack.fm/message/',
+                        type: 'POST',
+                        data: nicedata ,
+                        crossDomain: true,
+                        success: function(response) {
+                          message_id = response.data._id
+                                      
+           $.ajax({
+              url: 'https://api.dubtrack.fm/message/' + message_id,
+              type: 'GET',
+              crossDomain: true,
+              success: function(data) {
+           
+console.log(data);
+if (!$("#sneakybox"+message_id).length){
+
+
+//CREATE THE PM BOX
+$('#sneakyPM').append('<div id="sneakybox'+message_id+'" class="sneakyPMWindow pmbox'+coolName+'"><div class="sneakyTop">'+coolName+' <div class="sneakyClose" onclick="autoDub.closePM(\''+message_id+'\')">x</div></div><div id="sneakTexty'+message_id+'" class="sneakyPmtxt"></div><input id="sneakText'+message_id+'" class="sneakypmPut" type="text"></div>');
+  $('#sneakText'+message_id).keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+     var textValue = $(this).attr('id');
+var message_id1 = textValue.substring(9, textValue.length);
+
+    var stuff = $('#sneakText'+message_id1).val();
+    console.log(message_id1);
+     console.log(stuff);
+    if (stuff != ""){
+                     var dat = {
+             "created":1450294100941,
+             "message":stuff,
+             "userid":"56015d872e803803000ffde6",
+             "messageid":"",
+             "_message":{
+
+             },
+             "_user":{
+                "username":"ned_stark_reality",
+                "status":1,
+                "roleid":1,
+                "dubs":0,
+                "created":1442930054513,
+                "lastLogin":0,
+                "userInfo":{
+                   "_id":"56015d872e803803000ffde7",
+                   "locale":"en_US",
+                   "userid":"56015d872e803803000ffde6",
+                   "__v":0
+                },
+                "_force_updated":1448741219759,
+                "_id":"56015d872e803803000ffde6",
+                "__v":0
+             }
+                 };
+
+
+                $.ajax({
+                        url: 'https://api.dubtrack.fm/message/' + message_id1,
+                        type: 'POST',
+                        data: dat ,
+                        crossDomain: true,
+                    });
+      $('#sneakText'+message_id1).val('');
+    
+  } }
+});
+
+
+  for (var i=0; i< data.data.length; i++){
+    var nice = data.data[i];
+   
+     var msg0 = data.data[i].message;
+     var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+      var user1 = data.data[i]._user.username;
+      $('#sneakTexty'+message_id).prepend('<div class="sneakyMsg"><strong>'+user1+':</strong> '+msg1+'</div>');
+
+  }
+  emojify.run(document.getElementById('sneakTexty'+message_id));
+
+  $("#sneakTexty"+message_id).scrollTop( $("#sneakTexty"+message_id)[0].scrollHeight);
+} 
+
+                                     
+                },
+              error: function(xhr, textStatus, errorThrown){
+                 console.log('ajax pm failed :( ');
+              }
+          });
+ 
+                        },
+                        error: function(xhr, textStatus, errorThrown){
+                            console.log(xhr);
+                          }
+                        });
+                          
+};
+
+autoDub.newPM = function(event){
+  if (autoDub.pmPlus){
+ var user_id = event.userid;
+ //console.log(event);
+     
+       var message_id = event.messageid;
+            
+           $.ajax({
+              url: 'https://api.dubtrack.fm/message/' + message_id,
+              type: 'GET',
+              crossDomain: true,
+              success: function(data) {
+                  var msg = data.data[0].message;
+                  var user = data.data[0]._user.username;
+console.log(data);
+if (!$("#sneakybox"+message_id).length){
+
+
+//CREATE THE PM BOX
+$('#sneakyPM').append('<div id="sneakybox'+message_id+'" class="sneakyPMWindow pmbox'+user+'"><div class="sneakyTop">'+user+' <div class="sneakyClose" onclick="autoDub.closePM(\''+message_id+'\')">x</div></div><div id="sneakTexty'+message_id+'" class="sneakyPmtxt"></div><input id="sneakText'+message_id+'" class="sneakypmPut" type="text"></div>');
+  $('#sneakText'+message_id).keypress(function (e) {
+
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+    var textValue = $(this).attr('id');
+var message_id1 = textValue.substring(9, textValue.length);
+
+
+    console.log(e);
+    var stuff = $('#sneakText'+message_id1).val();
+    if (stuff != ""){
+                     var dat = {
+             "created":1450294100941,
+             "message":stuff,
+             "userid":"56015d872e803803000ffde6",
+             "messageid":"",
+             "_message":{
+
+             },
+             "_user":{
+                "username":"ned_stark_reality",
+                "status":1,
+                "roleid":1,
+                "dubs":0,
+                "created":1442930054513,
+                "lastLogin":0,
+                "userInfo":{
+                   "_id":"56015d872e803803000ffde7",
+                   "locale":"en_US",
+                   "userid":"56015d872e803803000ffde6",
+                   "__v":0
+                },
+                "_force_updated":1448741219759,
+                "_id":"56015d872e803803000ffde6",
+                "__v":0
+             }
+                 };
+
+
+                $.ajax({
+                        url: 'https://api.dubtrack.fm/message/' + message_id1,
+                        type: 'POST',
+                        data: dat ,
+                        crossDomain: true,
+                    });
+      $('#sneakText'+message_id1).val('');
+    
+  } }
+});
+  for (var i=0; i< data.data.length; i++){
+    var nice = data.data[i];
+   
+     var msg0 = data.data[i].message;
+     var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+      var user1 = data.data[i]._user.username;
+      $('#sneakTexty'+message_id).prepend('<div class="sneakyMsg"><strong>'+user1+':</strong> '+msg1+'</div>');
+
+  }
+  emojify.run(document.getElementById('sneakTexty'+message_id));
+
+  $("#sneakTexty"+message_id).scrollTop( $("#sneakTexty"+message_id)[0].scrollHeight);
+
+
+} else {
+  var newChat = "";
+  for (var i=data.data.length - 1; i>=0 ; i--){
+    var nice = data.data[i];
+     var msg0 = data.data[i].message;
+     var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+      var user1 = data.data[i]._user.username;
+      newChat += '<div class="sneakyMsg"><strong>'+user1+':</strong> '+msg1+'</div>';
+
+  }
+  $("#sneakTexty"+message_id).html(newChat);
+  emojify.run(document.getElementById('sneakTexty'+message_id));
+
+  $("#sneakTexty"+message_id).scrollTop( $("#sneakTexty"+message_id)[0].scrollHeight);
+
+
+}
+
+
+                                     
+                },
+              error: function(xhr, textStatus, errorThrown){
+                 console.log('ajax pm failed :( ');
+              }
+          });
+ 
+ }     
+};
 autoDub.init = function() {
     console.log("enter init");
 
@@ -174,6 +398,8 @@ autoDub.init = function() {
   Dubtrack.Events.bind("realtime:user-join", autoDub.userJoin);
   Dubtrack.Events.bind("realtime:room_playlist-dub", autoDub.newVote);
   Dubtrack.Events.bind("realtime:chat-message", autoDub.newChat);
+  Dubtrack.Events.bind("realtime:new-message", autoDub.newPM);
+
       console.log("events binded");
 
  // $(".dubup").click();
@@ -314,9 +540,9 @@ if( autoDub.shootDucks ) ducksOpt = "on";
 if( autoDub.discoballDancers ) discoballdancersOpt = "on"
 $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">"+et+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.discoballdancersToggle()\" class=\"autodub-discoballdancerslink\" title=\"Disables the discoball and dancers entirely\">Discoball/Dancers <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdiscoballdancers\">"+discoballdancersOpt+"</span>");
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.discoballdancersToggle()\" class=\"autodub-discoballdancerslink\">Discoball/Dancers <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdiscoballdancers\">"+discoballdancersOpt+"</span>");
    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">"+altD+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\" title=\"Show desktop notifications for duck hunting\">Ducks <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">"+ducksOpt+"</span>");
+   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\">Duck Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">"+ducksOpt+"</span>");
 
 
   },
@@ -377,7 +603,10 @@ $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weig
 };
 
 autoDub.ui = {
-  init: function(mode, jl, dv, qt) {
+  init: function(mode, jl, dv, qt, pm) {
+    if (pm){
+      $('html').append('<style>#usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 4px;background-color: #000;color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 200px; margin-left: 10px; background-color: #fff; border-left: 1px solid #000; border-right: 1px solid #000;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{padding:4px;background-color:#000;color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font-family:helvetica,arial,sans-serif;font-size:12px}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;background-color:#fff;border-left:1px solid #000;border-right:1px solid #000} .sneakypmPut{font-family:helvetica,arial,sans-serif;width:100%;font-size:12px;border-top:1px solid #000;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
+    }
     var themode = autoDub.mode;
     if (mode) themode = mode;
     autoDub.roomCheck = setInterval(function() {
@@ -408,6 +637,12 @@ autoDub.ui = {
     } else if (autoDub.queueThanks){
       qtm = "on";
     }
+ var pmp = "off";
+    if (pm){
+      pmp = "on";
+    } else if (autoDub.pmPlus){
+      pmp = "on";
+    }
 
     var desktopNotificationStatus = 'off';
     if( autoDub.desktopNotifications == true ){
@@ -421,6 +656,7 @@ autoDub.ui = {
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">"+dvm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">"+desktopNotificationStatus+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">"+pmp+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -459,6 +695,30 @@ autoDub.ui = {
   toolTips: function() {
     autoDub.toolTip = 'AutoDub is in timer mode. This autovotes at a random time during each song.';
     if ($(".tooltip").text()) $(".tooltip").text(autoDub.toolTip);
+  },
+  pmMenu: function(){
+    var status = $("#usrbottom").css("display");
+    if (status == "none"){
+     $.ajax({
+       dataType: "json",
+       type : "GET",
+       url: "https://api.dubtrack.fm/room/"+Dubtrack.room.model.id+"/users", 
+            success:  function (formatted){
+         for (var i = 0; i<formatted.data.length; i++){
+          var id = formatted.data[i]._user._id;
+          var name = formatted.data[i]._user.username;
+          $('#usrsneak').prepend('<li onclick="autoDub.makeConvo(\''+id+'\',\''+name+'\')" id="yoits'+id+'">'+name+'</li>');
+        }
+            }
+     });
+     $("#snklist").text("-");
+    $("#usrbottom").css("display","block");
+  } else {
+    $("#usrbottom").css("display","none");
+    $('#usrsneak').text("");
+    $("#snklist").text("+");
+
+  }
   }
 };
 
@@ -472,6 +732,18 @@ autoDub.jlmToggle = function(){
   }
   autoDub.storage.save();
   $("#autoDubjlm").text(label);
+};
+
+autoDub.pmpToggle = function(){
+  var label = "off";
+  if (autoDub.pmPlus){
+    autoDub.pmPlus = false;
+  } else {
+    label = "on";
+    autoDub.pmPlus = true;
+  }
+  autoDub.storage.save();
+  $("#autoDubpmp").text(label);
 };
 
 autoDub.toggleDeskNotStat = function(){
@@ -600,6 +872,7 @@ autoDub.storage = {
       queueThanks: autoDub.queueThanks,
       lastLoaded: autoDub.lastLoaded,
       dvm: autoDub.dvm,
+      pmPlus: autoDub.pmPlus,
       desktopNotifications: autoDub.desktopNotifications,
       shootDucks: autoDub.shootDucks,
       discoballDancers: autoDub.discoballDancers,
@@ -619,11 +892,13 @@ autoDub.storage = {
     $.extend(autoDub, preferences);
     var jl = false;
     var qt = true;
+    var pm = false;
     var dv = true;
+    if (typeof preferences.pmPlus != "undefined") pm = preferences.pmPlus;
     if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
     if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
-    autoDub.ui.init(preferences.mode, jl, dv, qt);
+    autoDub.ui.init(preferences.mode, jl, dv, qt, pm);
   }
 };
 

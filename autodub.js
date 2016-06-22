@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.39",
-  whatsNew: "Desktop noticications for @user messages! On by default, but can be turned off in AutoDub settings!",
+  version: "00.40",
+  whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,

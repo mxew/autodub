@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.41",
-  whatsNew: "",
+  version: "00.42",
+  whatsNew: "Fixed an issue with the queue thing being all crazy and float-y and stuff.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -617,7 +617,7 @@ autoDub.ui = {
       }
     }, 2000);
     if (qt) {
-      $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("margin-bottom","55px");$("#browser").css("width","50%");});
+      $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","50%");});
     }
     var jlm = "off";
     if (jl){
@@ -780,7 +780,7 @@ autoDub.qtToggle = function(){
   } else {
     label = "on";
     autoDub.queueThanks = true;
-          $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("margin-bottom","55px");$("#browser").css("width","50%");});
+          $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","50%");});
   }
   autoDub.storage.save();
   $("#autoDubqt").text(label);

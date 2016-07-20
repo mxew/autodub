@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.42",
-  whatsNew: "Fixed an issue with the queue thing being all crazy and float-y and stuff.",
+  version: "00.44",
+  whatsNew: "PSA: Watson is a robot.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -683,9 +683,9 @@ autoDub.ui = {
         autoDub.idmode.init();
         var cat = Dubtrack.helpers.cookie.get('dubtrack-disable-role-colors');
         if (!cat){
-    $("head").append("<style>.user-560164dd2e803803000fffb6 .username,.userid-560164dd2e803803000fffb6 .username, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;}.user-560164dd2e803803000fffb6 .user-role{background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-560164dd2e803803000fffb6 .user-role{background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
+    $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:50px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:50px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
         }else if (cat == "false"){
-    $("head").append("<style>.user-560164dd2e803803000fffb6 .username,.userid-560164dd2e803803000fffb6 .username, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;}.user-560164dd2e803803000fffb6 .user-role{background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-560164dd2e803803000fffb6 .user-role{background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
+    $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:50px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:50px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
         }
       }, 1000);
     }

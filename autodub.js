@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.45",
-  whatsNew: "minor bug fix. no big deal.",
+  version: "00.46.1",
+  whatsNew: "Added the option to hide chat avatars. You can toggle this from the AutoDub settings menu.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -12,6 +12,7 @@ var autoDub = {
   queueThanks: true,
   pmPlus: false,
   firstTalk: false,
+  hideAvatars: false,
   dvm: true,
   users: {},
   joinLeaves: false,
@@ -603,7 +604,7 @@ $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weig
 };
 
 autoDub.ui = {
-  init: function(mode, jl, dv, qt, pm) {
+  init: function(mode, jl, dv, qt, pm, ha) {
     if (pm){
       $('html').append('<style>#usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 4px;background-color: #000;color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 200px; margin-left: 10px; background-color: #fff; border-left: 1px solid #000; border-right: 1px solid #000;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{padding:4px;background-color:#000;color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font-family:helvetica,arial,sans-serif;font-size:12px}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;background-color:#fff;border-left:1px solid #000;border-right:1px solid #000} .sneakypmPut{font-family:helvetica,arial,sans-serif;width:100%;font-size:12px;border-top:1px solid #000;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
@@ -618,6 +619,9 @@ autoDub.ui = {
     }, 2000);
     if (qt) {
       $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","50%");});
+    }
+    if (ha){
+      $("head").append("<style id='hideAvatars'>.image_row{display:none;} .activity-row{padding-left: 0 !important;} li.imgEl{ display: none !important;} li.infoContainer{padding:0 !important;}}</style>");
     }
     var jlm = "off";
     if (jl){
@@ -637,6 +641,12 @@ autoDub.ui = {
     } else if (autoDub.queueThanks){
       qtm = "on";
     }
+var hideav = "off";
+  if (ha){
+    hideav = "on";
+  } else if (autodub.hideAvatars){
+    hideav = "on";
+  }
  var pmp = "off";
     if (pm){
       pmp = "on";
@@ -654,7 +664,8 @@ autoDub.ui = {
     $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">"+jlm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">"+dvm+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-qtlink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
+        $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.haToggle()\" class=\"autodub-qtlink\">Hide Avatars <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubha\">"+hideav+"</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-halink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">"+desktopNotificationStatus+"</span>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">"+pmp+"</span>");
     $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
@@ -786,6 +797,20 @@ autoDub.qtToggle = function(){
   $("#autoDubqt").text(label);
 };
 
+autoDub.haToggle = function(){
+  var label = "off";
+  if (autoDub.hideAvatars){
+    autoDub.hideAvatars = false;
+  $("#hideAvatars").remove();
+  } else {
+    label = "on";
+    autoDub.hideAvatars = true;
+    $("head").append("<style id='hideAvatars'>.image_row{display:none;} .activity-row{padding-left: 0 !important;} li.imgEl{ display: none !important;} li.infoContainer{padding:0 !important;}}</style>");
+  }
+  autoDub.storage.save();
+  $("#autoDubha").text(label);
+};
+
 autoDub.etToggle = function(){
   var label = "off";
   if (autoDub.eveTalk){
@@ -870,6 +895,7 @@ autoDub.storage = {
       altDancers: autoDub.altDancers,
       eveTalk: autoDub.eveTalk,
       queueThanks: autoDub.queueThanks,
+      hideAvatars: autoDub.hideAvatars,
       lastLoaded: autoDub.lastLoaded,
       dvm: autoDub.dvm,
       pmPlus: autoDub.pmPlus,
@@ -893,12 +919,14 @@ autoDub.storage = {
     var jl = false;
     var qt = true;
     var pm = false;
+    var ha = false;
     var dv = true;
     if (typeof preferences.pmPlus != "undefined") pm = preferences.pmPlus;
+    if (typeof preferences.hideAvatars != "undefined") ha = preferences.hideAvatars;
     if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
     if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
-    autoDub.ui.init(preferences.mode, jl, dv, qt, pm);
+    autoDub.ui.init(preferences.mode, jl, dv, qt, pm, ha);
   }
 };
 

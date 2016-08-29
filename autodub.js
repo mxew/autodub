@@ -101,26 +101,26 @@ autoDub.newChat = function(data) {
           var ducknotification = new Notification('Quack quack...', {
             icon: 'https://i.imgur.com/1huAkzf.png',
             body: "・゜ ​ ゜・。。・゜゜\_ö<",
-          }); // notification
+          });
           ducknotification.onclick = function() {
             Dubtrack.room.chat._messageInputEl.val("!shootduck");
             Dubtrack.room.chat.sendMessage();
-          }; // notification.onclick
+          };
         } else if (uid == "560164dd2e803803000fffb6" && msg.match(deadduckmatch)) {
           var deadduckinfo = deadduckmatch.exec(msg);
           var bodycopy = deadduckinfo[1] + " +" + deadduckinfo[3] + " DCs. Yay!";
           var duckdeadnotification = new Notification('THE DUCKY LOST.', {
             icon: 'https://i.imgur.com/1huAkzf.png',
             body: bodycopy,
-          }); // notification
+          });
         } else if (uid == "560164dd2e803803000fffb6" && msg.match(/DUCK FLEW AWAY\!/)) {
           var duckdeadnotification = new Notification('DUCK FLEW AWAY!', {
             icon: 'https://i.imgur.com/1huAkzf.png',
             body: "wah wah waaaah",
-          }); // notification
+          });
         }
-      } // else
-    } // Notification
+      }
+    }
   }
   if (autoDub.desktopNotifications == true) {
     var yourStupidName = '@' + $('.user-info span').text();
@@ -132,11 +132,11 @@ autoDub.newChat = function(data) {
           var notification = new Notification(name, {
             icon: 'https://api.dubtrack.fm/user/' + uid + '/image',
             body: msg,
-          }); // notification
+          });
         }
-      } // else
-    } // Notification
-  } // if desktopNotifications
+      }
+    }
+  }
 
   if (autoDub.idmode.userid && autoDub.idmode.arnold) {
     setTimeout(function() {

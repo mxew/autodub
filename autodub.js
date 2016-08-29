@@ -67,21 +67,21 @@ autoDub.newSong = function(data) {
     autoDub.songtimer = null;
     $("#autoDubTimer").countdown("destroy");
   }
-    console.log(thetimer / 1000);
-    var thetimer2 = Math.floor(thetimer / 1000);
-    $("#autoDubTimer").countdown({
-      until: +thetimer2,
-      compact: true,
-      description: "",
-      format: "MS"
-    });
-    autoDub.songtimer = setTimeout(function() {
-      autoDub.songtimer = null;
-      $("#autoDubTimer").countdown("destroy");
-      $("#autoDubTimer").text("voted");
-      $(".dubup").click();
-      console.log("voted.");
-    }, thetimer);
+  console.log(thetimer / 1000);
+  var thetimer2 = Math.floor(thetimer / 1000);
+  $("#autoDubTimer").countdown({
+    until: +thetimer2,
+    compact: true,
+    description: "",
+    format: "MS"
+  });
+  autoDub.songtimer = setTimeout(function() {
+    autoDub.songtimer = null;
+    $("#autoDubTimer").countdown("destroy");
+    $("#autoDubTimer").text("voted");
+    $(".dubup").click();
+    console.log("voted.");
+  }, thetimer);
 
 };
 
@@ -90,30 +90,30 @@ autoDub.newChat = function(data) {
   var uid = data.user._id;
   var name = data.user.username;
   var msg = data.message;
-  if( autoDub.shootDucks == true ){
+  if (autoDub.shootDucks == true) {
     ducktimematch = /Quack quack../i;
     deadduckmatch = /(?:^|\s)(.*?) nice\!(.*?)have a (.*?)(?:^|\s)discocheque reward\./i;
-    if (Notification){
-      if (Notification.permission !== "granted"){
+    if (Notification) {
+      if (Notification.permission !== "granted") {
         Notification.requestPermission();
-      }else{
-        if ( uid == "560164dd2e803803000fffb6" && msg.match( ducktimematch ) ){
+      } else {
+        if (uid == "560164dd2e803803000fffb6" && msg.match(ducktimematch)) {
           var ducknotification = new Notification('Quack quack...', {
             icon: 'https://i.imgur.com/1huAkzf.png',
             body: "・゜ ​ ゜・。。・゜゜\_ö<",
           }); // notification
-          ducknotification.onclick = function () {
+          ducknotification.onclick = function() {
             Dubtrack.room.chat._messageInputEl.val("!shootduck");
             Dubtrack.room.chat.sendMessage();
           }; // notification.onclick
-        }else if( uid == "560164dd2e803803000fffb6" && msg.match( deadduckmatch ) ){
-          var deadduckinfo = deadduckmatch.exec( msg );
+        } else if (uid == "560164dd2e803803000fffb6" && msg.match(deadduckmatch)) {
+          var deadduckinfo = deadduckmatch.exec(msg);
           var bodycopy = deadduckinfo[1] + " +" + deadduckinfo[3] + " DCs. Yay!";
           var duckdeadnotification = new Notification('THE DUCKY LOST.', {
             icon: 'https://i.imgur.com/1huAkzf.png',
             body: bodycopy,
           }); // notification
-        }else if( uid == "560164dd2e803803000fffb6" && msg.match( /DUCK FLEW AWAY\!/ ) ){
+        } else if (uid == "560164dd2e803803000fffb6" && msg.match(/DUCK FLEW AWAY\!/)) {
           var duckdeadnotification = new Notification('DUCK FLEW AWAY!', {
             icon: 'https://i.imgur.com/1huAkzf.png',
             body: "wah wah waaaah",
@@ -122,15 +122,15 @@ autoDub.newChat = function(data) {
       } // else
     } // Notification
   }
-  if( autoDub.desktopNotifications == true ){
-    var yourStupidName = '@'+$('.user-info span').text();
-    if (Notification){
-      if (Notification.permission !== "granted"){
+  if (autoDub.desktopNotifications == true) {
+    var yourStupidName = '@' + $('.user-info span').text();
+    if (Notification) {
+      if (Notification.permission !== "granted") {
         Notification.requestPermission();
-      }else{
-        if( msg.match( yourStupidName, 'i' ) || msg.match( /\@everyone/ ) ){
+      } else {
+        if (msg.match(yourStupidName, 'i') || msg.match(/\@everyone/)) {
           var notification = new Notification(name, {
-            icon: 'https://api.dubtrack.fm/user/'+uid+'/image',
+            icon: 'https://api.dubtrack.fm/user/' + uid + '/image',
             body: msg,
           }); // notification
         }
@@ -138,255 +138,257 @@ autoDub.newChat = function(data) {
     } // Notification
   } // if desktopNotifications
 
-  if (autoDub.idmode.userid && autoDub.idmode.arnold){
-    setTimeout(function(){
+  if (autoDub.idmode.userid && autoDub.idmode.arnold) {
+    setTimeout(function() {
       $(".chat-id-" + id).find(".cursor-pointer").attr("src", "https://i.imgur.com/1AME7v3.png");
     }, 1500);
   }
 };
 
 autoDub.chatSpam = {
-  joinLeave: function (id, name, type){
+  joinLeave: function(id, name, type) {
     var color = "#b6ffc0";
-    var msg = name+" has joined the room";
-    if (type == "leave"){
+    var msg = name + " has joined the room";
+    if (type == "leave") {
       color = "#ffa1a1";
-      msg = name+" left the room";
+      msg = name + " left the room";
     }
-    $(".chat-main").append("<li style=\"color:"+color+";\">"+msg+".</li>");
+    $(".chat-main").append("<li style=\"color:" + color + ";\">" + msg + ".</li>");
     Dubtrack.room.chat.scollBottomChat();
   },
-  dv: function (name){
-    $(".chat-main").append("<li style=\"color:magenta;\">"+name+" downvoted this song.</li>");
+  dv: function(name) {
+    $(".chat-main").append("<li style=\"color:magenta;\">" + name + " downvoted this song.</li>");
     Dubtrack.room.chat.scollBottomChat();
   }
 };
 
-autoDub.closePM = function(id){
-    $("#sneakText"+id).unbind("keypress");
+autoDub.closePM = function(id) {
+  $("#sneakText" + id).unbind("keypress");
 
-    $("#sneakybox"+id).remove();
+  $("#sneakybox" + id).remove();
 
 };
-autoDub.makeConvo = function(userid,coolName){
-  if ($(".pmbox"+coolName).length) return;
- var nicedata = 'usersid%5B%5D=' +userid;
+autoDub.makeConvo = function(userid, coolName) {
+  if ($(".pmbox" + coolName).length) return;
+  var nicedata = 'usersid%5B%5D=' + userid;
 
 
-                        $.ajax({
-                        url: 'https://api.dubtrack.fm/message/',
-                        type: 'POST',
-                        data: nicedata ,
-                        crossDomain: true,
-                        success: function(response) {
-                          message_id = response.data._id
-                                      
-           $.ajax({
-              url: 'https://api.dubtrack.fm/message/' + message_id,
-              type: 'GET',
-              crossDomain: true,
-              success: function(data) {
-           
-console.log(data);
-if (!$("#sneakybox"+message_id).length){
+  $.ajax({
+    url: 'https://api.dubtrack.fm/message/',
+    type: 'POST',
+    data: nicedata,
+    crossDomain: true,
+    success: function(response) {
+      message_id = response.data._id
+
+      $.ajax({
+        url: 'https://api.dubtrack.fm/message/' + message_id,
+        type: 'GET',
+        crossDomain: true,
+        success: function(data) {
+
+          console.log(data);
+          if (!$("#sneakybox" + message_id).length) {
 
 
-//CREATE THE PM BOX
-$('#sneakyPM').append('<div id="sneakybox'+message_id+'" class="sneakyPMWindow pmbox'+coolName+'"><div class="sneakyTop">'+coolName+' <div class="sneakyClose" onclick="autoDub.closePM(\''+message_id+'\')">x</div></div><div id="sneakTexty'+message_id+'" class="sneakyPmtxt"></div><input id="sneakText'+message_id+'" class="sneakypmPut" type="text"></div>');
-  $('#sneakText'+message_id).keypress(function (e) {
- var key = e.which;
- if(key == 13)  // the enter key code
-  {
-     var textValue = $(this).attr('id');
-var message_id1 = textValue.substring(9, textValue.length);
+            //CREATE THE PM BOX
+            $('#sneakyPM').append('<div id="sneakybox' + message_id + '" class="sneakyPMWindow pmbox' + coolName + '"><div class="sneakyTop">' + coolName + ' <div class="sneakyClose" onclick="autoDub.closePM(\'' + message_id + '\')">x</div></div><div id="sneakTexty' + message_id + '" class="sneakyPmtxt"></div><input id="sneakText' + message_id + '" class="sneakypmPut" type="text"></div>');
+            $('#sneakText' + message_id).keypress(function(e) {
+              var key = e.which;
+              if (key == 13) // the enter key code
+              {
+                var textValue = $(this).attr('id');
+                var message_id1 = textValue.substring(9, textValue.length);
 
-    var stuff = $('#sneakText'+message_id1).val();
-    console.log(message_id1);
-     console.log(stuff);
-    if (stuff != ""){
-                     var dat = {
-             "created":1450294100941,
-             "message":stuff,
-             "userid":"56015d872e803803000ffde6",
-             "messageid":"",
-             "_message":{
+                var stuff = $('#sneakText' + message_id1).val();
+                console.log(message_id1);
+                console.log(stuff);
+                if (stuff != "") {
+                  var dat = {
+                    "created": 1450294100941,
+                    "message": stuff,
+                    "userid": "56015d872e803803000ffde6",
+                    "messageid": "",
+                    "_message": {
 
-             },
-             "_user":{
-                "username":"ned_stark_reality",
-                "status":1,
-                "roleid":1,
-                "dubs":0,
-                "created":1442930054513,
-                "lastLogin":0,
-                "userInfo":{
-                   "_id":"56015d872e803803000ffde7",
-                   "locale":"en_US",
-                   "userid":"56015d872e803803000ffde6",
-                   "__v":0
-                },
-                "_force_updated":1448741219759,
-                "_id":"56015d872e803803000ffde6",
-                "__v":0
-             }
-                 };
+                    },
+                    "_user": {
+                      "username": "ned_stark_reality",
+                      "status": 1,
+                      "roleid": 1,
+                      "dubs": 0,
+                      "created": 1442930054513,
+                      "lastLogin": 0,
+                      "userInfo": {
+                        "_id": "56015d872e803803000ffde7",
+                        "locale": "en_US",
+                        "userid": "56015d872e803803000ffde6",
+                        "__v": 0
+                      },
+                      "_force_updated": 1448741219759,
+                      "_id": "56015d872e803803000ffde6",
+                      "__v": 0
+                    }
+                  };
+
+
+                  $.ajax({
+                    url: 'https://api.dubtrack.fm/message/' + message_id1,
+                    type: 'POST',
+                    data: dat,
+                    crossDomain: true,
+                  });
+                  $('#sneakText' + message_id1).val('');
+
+                }
+              }
+            });
+
+
+            for (var i = 0; i < data.data.length; i++) {
+              var nice = data.data[i];
+
+              var msg0 = data.data[i].message;
+              var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+              var user1 = data.data[i]._user.username;
+              $('#sneakTexty' + message_id).prepend('<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>');
+
+            }
+            emojify.run(document.getElementById('sneakTexty' + message_id));
+
+            $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
+          }
+
+
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          console.log('ajax pm failed :( ');
+        }
+      });
+
+    },
+    error: function(xhr, textStatus, errorThrown) {
+      console.log(xhr);
+    }
+  });
+
+};
+
+autoDub.newPM = function(event) {
+  if (autoDub.pmPlus) {
+    var user_id = event.userid;
+    //console.log(event);
+
+    var message_id = event.messageid;
+
+    $.ajax({
+      url: 'https://api.dubtrack.fm/message/' + message_id,
+      type: 'GET',
+      crossDomain: true,
+      success: function(data) {
+        var msg = data.data[0].message;
+        var user = data.data[0]._user.username;
+        console.log(data);
+        if (!$("#sneakybox" + message_id).length) {
+
+
+          //CREATE THE PM BOX
+          $('#sneakyPM').append('<div id="sneakybox' + message_id + '" class="sneakyPMWindow pmbox' + user + '"><div class="sneakyTop">' + user + ' <div class="sneakyClose" onclick="autoDub.closePM(\'' + message_id + '\')">x</div></div><div id="sneakTexty' + message_id + '" class="sneakyPmtxt"></div><input id="sneakText' + message_id + '" class="sneakypmPut" type="text"></div>');
+          $('#sneakText' + message_id).keypress(function(e) {
+
+            var key = e.which;
+            if (key == 13) // the enter key code
+            {
+              var textValue = $(this).attr('id');
+              var message_id1 = textValue.substring(9, textValue.length);
+
+
+              console.log(e);
+              var stuff = $('#sneakText' + message_id1).val();
+              if (stuff != "") {
+                var dat = {
+                  "created": 1450294100941,
+                  "message": stuff,
+                  "userid": "56015d872e803803000ffde6",
+                  "messageid": "",
+                  "_message": {
+
+                  },
+                  "_user": {
+                    "username": "ned_stark_reality",
+                    "status": 1,
+                    "roleid": 1,
+                    "dubs": 0,
+                    "created": 1442930054513,
+                    "lastLogin": 0,
+                    "userInfo": {
+                      "_id": "56015d872e803803000ffde7",
+                      "locale": "en_US",
+                      "userid": "56015d872e803803000ffde6",
+                      "__v": 0
+                    },
+                    "_force_updated": 1448741219759,
+                    "_id": "56015d872e803803000ffde6",
+                    "__v": 0
+                  }
+                };
 
 
                 $.ajax({
-                        url: 'https://api.dubtrack.fm/message/' + message_id1,
-                        type: 'POST',
-                        data: dat ,
-                        crossDomain: true,
-                    });
-      $('#sneakText'+message_id1).val('');
-    
-  } }
-});
+                  url: 'https://api.dubtrack.fm/message/' + message_id1,
+                  type: 'POST',
+                  data: dat,
+                  crossDomain: true,
+                });
+                $('#sneakText' + message_id1).val('');
 
-
-  for (var i=0; i< data.data.length; i++){
-    var nice = data.data[i];
-   
-     var msg0 = data.data[i].message;
-     var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
-      var user1 = data.data[i]._user.username;
-      $('#sneakTexty'+message_id).prepend('<div class="sneakyMsg"><strong>'+user1+':</strong> '+msg1+'</div>');
-
-  }
-  emojify.run(document.getElementById('sneakTexty'+message_id));
-
-  $("#sneakTexty"+message_id).scrollTop( $("#sneakTexty"+message_id)[0].scrollHeight);
-} 
-
-                                     
-                },
-              error: function(xhr, textStatus, errorThrown){
-                 console.log('ajax pm failed :( ');
               }
+            }
           });
- 
-                        },
-                        error: function(xhr, textStatus, errorThrown){
-                            console.log(xhr);
-                          }
-                        });
-                          
-};
+          for (var i = 0; i < data.data.length; i++) {
+            var nice = data.data[i];
 
-autoDub.newPM = function(event){
-  if (autoDub.pmPlus){
- var user_id = event.userid;
- //console.log(event);
-     
-       var message_id = event.messageid;
-            
-           $.ajax({
-              url: 'https://api.dubtrack.fm/message/' + message_id,
-              type: 'GET',
-              crossDomain: true,
-              success: function(data) {
-                  var msg = data.data[0].message;
-                  var user = data.data[0]._user.username;
-console.log(data);
-if (!$("#sneakybox"+message_id).length){
+            var msg0 = data.data[i].message;
+            var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+            var user1 = data.data[i]._user.username;
+            $('#sneakTexty' + message_id).prepend('<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>');
+
+          }
+          emojify.run(document.getElementById('sneakTexty' + message_id));
+
+          $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
 
 
-//CREATE THE PM BOX
-$('#sneakyPM').append('<div id="sneakybox'+message_id+'" class="sneakyPMWindow pmbox'+user+'"><div class="sneakyTop">'+user+' <div class="sneakyClose" onclick="autoDub.closePM(\''+message_id+'\')">x</div></div><div id="sneakTexty'+message_id+'" class="sneakyPmtxt"></div><input id="sneakText'+message_id+'" class="sneakypmPut" type="text"></div>');
-  $('#sneakText'+message_id).keypress(function (e) {
+        } else {
+          var newChat = "";
+          for (var i = data.data.length - 1; i >= 0; i--) {
+            var nice = data.data[i];
+            var msg0 = data.data[i].message;
+            var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+            var user1 = data.data[i]._user.username;
+            newChat += '<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>';
 
- var key = e.which;
- if(key == 13)  // the enter key code
-  {
-    var textValue = $(this).attr('id');
-var message_id1 = textValue.substring(9, textValue.length);
+          }
+          $("#sneakTexty" + message_id).html(newChat);
+          emojify.run(document.getElementById('sneakTexty' + message_id));
 
-
-    console.log(e);
-    var stuff = $('#sneakText'+message_id1).val();
-    if (stuff != ""){
-                     var dat = {
-             "created":1450294100941,
-             "message":stuff,
-             "userid":"56015d872e803803000ffde6",
-             "messageid":"",
-             "_message":{
-
-             },
-             "_user":{
-                "username":"ned_stark_reality",
-                "status":1,
-                "roleid":1,
-                "dubs":0,
-                "created":1442930054513,
-                "lastLogin":0,
-                "userInfo":{
-                   "_id":"56015d872e803803000ffde7",
-                   "locale":"en_US",
-                   "userid":"56015d872e803803000ffde6",
-                   "__v":0
-                },
-                "_force_updated":1448741219759,
-                "_id":"56015d872e803803000ffde6",
-                "__v":0
-             }
-                 };
+          $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
 
 
-                $.ajax({
-                        url: 'https://api.dubtrack.fm/message/' + message_id1,
-                        type: 'POST',
-                        data: dat ,
-                        crossDomain: true,
-                    });
-      $('#sneakText'+message_id1).val('');
-    
-  } }
-});
-  for (var i=0; i< data.data.length; i++){
-    var nice = data.data[i];
-   
-     var msg0 = data.data[i].message;
-     var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
-      var user1 = data.data[i]._user.username;
-      $('#sneakTexty'+message_id).prepend('<div class="sneakyMsg"><strong>'+user1+':</strong> '+msg1+'</div>');
+        }
+
+
+
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        console.log('ajax pm failed :( ');
+      }
+    });
 
   }
-  emojify.run(document.getElementById('sneakTexty'+message_id));
-
-  $("#sneakTexty"+message_id).scrollTop( $("#sneakTexty"+message_id)[0].scrollHeight);
-
-
-} else {
-  var newChat = "";
-  for (var i=data.data.length - 1; i>=0 ; i--){
-    var nice = data.data[i];
-     var msg0 = data.data[i].message;
-     var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
-      var user1 = data.data[i]._user.username;
-      newChat += '<div class="sneakyMsg"><strong>'+user1+':</strong> '+msg1+'</div>';
-
-  }
-  $("#sneakTexty"+message_id).html(newChat);
-  emojify.run(document.getElementById('sneakTexty'+message_id));
-
-  $("#sneakTexty"+message_id).scrollTop( $("#sneakTexty"+message_id)[0].scrollHeight);
-
-
-}
-
-
-                                     
-                },
-              error: function(xhr, textStatus, errorThrown){
-                 console.log('ajax pm failed :( ');
-              }
-          });
- 
- }     
 };
 autoDub.init = function() {
-    console.log("enter init");
+  console.log("enter init");
 
   autoDub.started = true;
   var script = document.createElement('script');
@@ -401,52 +403,52 @@ autoDub.init = function() {
   Dubtrack.Events.bind("realtime:chat-message", autoDub.newChat);
   Dubtrack.Events.bind("realtime:new-message", autoDub.newPM);
 
-      console.log("events binded");
+  console.log("events binded");
 
- // $(".dubup").click();
+  // $(".dubup").click();
 
   console.log("autodub v" + autoDub.version + " is a go!");
-  $( "<style>.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}.adbsettings a:last-child { border-bottom:none;}</style>" ).appendTo( "head" );
-  $( "<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:35px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v"+autoDub.version+"</div><div style=\"font-size: 1.1rem; font-weight: 700; text-align: center; text-transform: uppercase;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>" ).insertAfter( "#room-info-display" );
+  $("<style>.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}.adbsettings a:last-child { border-bottom:none;}</style>").appendTo("head");
+  $("<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:35px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v" + autoDub.version + "</div><div style=\"font-size: 1.1rem; font-weight: 700; text-align: center; text-transform: uppercase;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>").insertAfter("#room-info-display");
 
-$(".player_header").append("<span style=\"width: 40px; background-image: url(https://i.imgur.com/0WML9BT.png);color: rgba(0,0,0,0);background-position: center center;background-repeat: no-repeat;\" id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">_</span>");
+  $(".player_header").append("<span style=\"width: 40px; background-image: url(https://i.imgur.com/0WML9BT.png);color: rgba(0,0,0,0);background-position: center center;background-repeat: no-repeat;\" id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">_</span>");
 
 
-$( ".displayVideo-el" ).click(function() {
-    $("#noumBoard").css("display","none");
+  $(".displayVideo-el").click(function() {
+    $("#noumBoard").css("display", "none");
 
-});
-$( ".room-info-display" ).click(function() {
-    $("#noumBoard").css("display","none");
-});
+  });
+  $(".room-info-display").click(function() {
+    $("#noumBoard").css("display", "none");
+  });
 
-$( ".display-mods-controls" ).click(function() {
-    $("#noumBoard").css("display","none");
-});
+  $(".display-mods-controls").click(function() {
+    $("#noumBoard").css("display", "none");
+  });
   autoDub.storage.restore();
-    console.log("exit init");
+  console.log("exit init");
 
 };
 
-autoDub.noumBoard = function(){
-  $( ".player_header" ).find( ".active" ).removeClass( "active" );
-  $( "#buttonThingThanks2" ).addClass( "active" );
-  $("#room-info-display").css("display","none");
-  $("#mods-controllers").css("display","none");
-  $(".player_container").css("display","none");
-  $("#noumBoard").css("display","block");
+autoDub.noumBoard = function() {
+  $(".player_header").find(".active").removeClass("active");
+  $("#buttonThingThanks2").addClass("active");
+  $("#room-info-display").css("display", "none");
+  $("#mods-controllers").css("display", "none");
+  $(".player_container").css("display", "none");
+  $("#noumBoard").css("display", "block");
 };
 
-autoDub.userJoin = function(data){
+autoDub.userJoin = function(data) {
   var id = data.user._id;
   var name = data.user.username;
-  if (!autoDub.users[id]){
+  if (!autoDub.users[id]) {
     autoDub.users[id] = true;
     if (autoDub.joinLeaves) autoDub.chatSpam.joinLeave(id, name, "join");
   }
 };
 
-autoDub.userLeave = function(data){
+autoDub.userLeave = function(data) {
   var id = data.user._id;
   var name = data.user.username;
   autoDub.users[id] = false;
@@ -456,18 +458,18 @@ autoDub.userLeave = function(data){
 autoDub.idmode = {
   discoball: {
     create: function() {
-      if( autoDub.discoballDancers ){
+      if (autoDub.discoballDancers) {
         var discoballdisplay = 'block';
         var dancersheight = '130px';
-      }else{
+      } else {
         var discoballdisplay = 'none';
         var dancersheight = '0';
       }
-      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: "+discoballdisplay+"; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
-      if (!autoDub.altDancers){
-        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:"+dancersheight+"; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center top; display: " + discoballdisplay + "; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
+      if (!autoDub.altDancers) {
+        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:" + dancersheight + "; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       } else {
-      $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:"+dancersheight+"; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
+        $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:" + dancersheight + "; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/aeOoQTZ.gif); width:88px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       }
     },
     up: function() {
@@ -492,9 +494,9 @@ autoDub.idmode = {
   theRoomShit: null,
   userid: null,
   init: function() {
-     if (Notification.permission !== "granted"){
-    Notification.requestPermission();
-}
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
     autoDub.idmode.getName();
   },
   getUserId: function(username) {
@@ -531,38 +533,38 @@ autoDub.idmode = {
     autoDub.idmode.onDiscoballChange = autoDub.idmode.theRoomShit.on("value", function(snapshot) {
       autoDub.idmode.roomShitChange(snapshot);
     });
-var et = "off";
-var altD = "off";
-var ducksOpt = "off";
-var discoballdancersOpt = "off";
-if (autoDub.altDancers) altD = "on";
-if (autoDub.eveTalk) et = "on";
-if( autoDub.shootDucks ) ducksOpt = "on";
-if( autoDub.discoballDancers ) discoballdancersOpt = "on"
-$("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
-  $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">"+et+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.discoballdancersToggle()\" class=\"autodub-discoballdancerslink\">Discoball/Dancers <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdiscoballdancers\">"+discoballdancersOpt+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">"+altD+"</span>");
-   $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\">Duck Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">"+ducksOpt+"</span>");
+    var et = "off";
+    var altD = "off";
+    var ducksOpt = "off";
+    var discoballdancersOpt = "off";
+    if (autoDub.altDancers) altD = "on";
+    if (autoDub.eveTalk) et = "on";
+    if (autoDub.shootDucks) ducksOpt = "on";
+    if (autoDub.discoballDancers) discoballdancersOpt = "on"
+    $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
+    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">" + et + "</span>");
+    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.discoballdancersToggle()\" class=\"autodub-discoballdancerslink\">Discoball/Dancers <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdiscoballdancers\">" + discoballdancersOpt + "</span>");
+    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">" + altD + "</span>");
+    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\">Duck Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">" + ducksOpt + "</span>");
 
 
   },
-  eveTalkr: function(snapshot){
+  eveTalkr: function(snapshot) {
     var data = snapshot.val();
-    if (!autoDub.firstTalk){
+    if (!autoDub.firstTalk) {
       autoDub.firstTalk = true;
     } else {
-    if (data){
-      if (autoDub.eveTalk){
-        console.log(data.msg);
-        responsiveVoice.speak(data.msg);
+      if (data) {
+        if (autoDub.eveTalk) {
+          console.log(data.msg);
+          responsiveVoice.speak(data.msg);
+        }
       }
     }
-  }
   },
-  shirtChange: function(snapshot){
+  shirtChange: function(snapshot) {
     var data = snapshot.val();
-    $(".currentSong").html(data.artist+" - "+data.title);
+    $(".currentSong").html(data.artist + " - " + data.title);
   },
   roomShitChange: function(snapshot) {
     var data = snapshot.val();
@@ -571,15 +573,15 @@ $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weig
     } else {
       autoDub.idmode.discoball.up();
     }
-      if (typeof data.dancers != "undefined"){
+    if (typeof data.dancers != "undefined") {
 
-    var currentDancers = $("#dancers").is(":visible");
-    if (data.dancers != currentDancers){
-      $( "#dancers" ).slideToggle( "slow", function() {
+      var currentDancers = $("#dancers").is(":visible");
+      if (data.dancers != currentDancers) {
+        $("#dancers").slideToggle("slow", function() {
           //dancers toggled
-      });
+        });
+      }
     }
-  }
   },
   balchange: function(snapshot) {
     var data = snapshot.val();
@@ -605,7 +607,7 @@ $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weig
 
 autoDub.ui = {
   init: function(mode, jl, dv, qt, pm, ha) {
-    if (pm){
+    if (pm) {
       $('html').append('<style>#usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 4px;background-color: #000;color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 200px; margin-left: 10px; background-color: #fff; border-left: 1px solid #000; border-right: 1px solid #000;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{padding:4px;background-color:#000;color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font-family:helvetica,arial,sans-serif;font-size:12px}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;background-color:#fff;border-left:1px solid #000;border-right:1px solid #000} .sneakypmPut{font-family:helvetica,arial,sans-serif;width:100%;font-size:12px;border-top:1px solid #000;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
     var themode = autoDub.mode;
@@ -618,57 +620,60 @@ autoDub.ui = {
       }
     }, 2000);
     if (qt) {
-      $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","50%");});
+      $('#browser').one("DOMSubtreeModified", function() {
+        $(window).unbind('click.browser');
+        $("#browser").css("width", "50%");
+      });
     }
-    if (ha){
+    if (ha) {
       $("head").append("<style id='hideAvatars'>.image_row{display:none;} .activity-row{padding-left: 0 !important;} li.imgEl{ display: none !important;} li.infoContainer{padding:0 !important;}}</style>");
     }
     var jlm = "off";
-    if (jl){
+    if (jl) {
       jlm = "on";
-    } else if (autoDub.joinLeaves){
+    } else if (autoDub.joinLeaves) {
       jlm = "on";
     }
     var dvm = "off";
-    if (dv){
+    if (dv) {
       dvm = "on";
-    } else if (autoDub.dvm){
+    } else if (autoDub.dvm) {
       dvm = "on";
     }
- var qtm = "off";
-    if (qt){
+    var qtm = "off";
+    if (qt) {
       qtm = "on";
-    } else if (autoDub.queueThanks){
+    } else if (autoDub.queueThanks) {
       qtm = "on";
     }
-var hideav = "off";
-  if (ha){
-    hideav = "on";
-  } else if (autodub.hideAvatars){
-    hideav = "on";
-  }
- var pmp = "off";
-    if (pm){
+    var hideav = "off";
+    if (ha) {
+      hideav = "on";
+    } else if (autodub.hideAvatars) {
+      hideav = "on";
+    }
+    var pmp = "off";
+    if (pm) {
       pmp = "on";
-    } else if (autoDub.pmPlus){
+    } else if (autoDub.pmPlus) {
       pmp = "on";
     }
 
     var desktopNotificationStatus = 'off';
-    if( autoDub.desktopNotifications == true ){
+    if (autoDub.desktopNotifications == true) {
       desktopNotificationStatus = 'on';
-    }else{
+    } else {
       desktopNotificationStatus = 'off';
     }
 
     $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">"+jlm+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">"+dvm+"</span>");
-        $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.haToggle()\" class=\"autodub-qtlink\">Hide Avatars <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubha\">"+hideav+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-halink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">"+qtm+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">"+desktopNotificationStatus+"</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">"+pmp+"</span>");
-    $( "<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>" ).appendTo( "head" );
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">" + jlm + "</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">" + dvm + "</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.haToggle()\" class=\"autodub-qtlink\">Hide Avatars <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubha\">" + hideav + "</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-halink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">" + qtm + "</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">" + desktopNotificationStatus + "</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">" + pmp + "</span>");
+    $("<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>").appendTo("head");
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
       $('<p class="tooltip" style="max-width:150px;opacity:0.7;z-index:1000000;position:absolute;padding:5px;background-color:cyan;color:#000;font-size:14px;font-weight:700;"></p>')
@@ -685,57 +690,57 @@ var hideav = "off";
           left: mousex
         })
     });
-          setTimeout(function() {
+    setTimeout(function() {
 
-    if (Dubtrack.room.model.id == "55f82ef944809b0300f88695") {
-      $(".right_section").prepend("<div id=\"discobal\" style=\"position: absolute; margin-top: -20px; font-size: 14px;\">Loading your Discocheque balance...</div>");
-      autoDub.idmode.discoball.create();
-      setTimeout(function() {
-        autoDub.idmode.init();
-        var cat = Dubtrack.helpers.cookie.get('dubtrack-disable-role-colors');
-        if (!cat){
-    $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:100px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:100px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
-        }else if (cat == "false"){
-    $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:100px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:100px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
-        }
-      }, 1000);
-    }
-         }, 2000);
+      if (Dubtrack.room.model.id == "55f82ef944809b0300f88695") {
+        $(".right_section").prepend("<div id=\"discobal\" style=\"position: absolute; margin-top: -20px; font-size: 14px;\">Loading your Discocheque balance...</div>");
+        autoDub.idmode.discoball.create();
+        setTimeout(function() {
+          autoDub.idmode.init();
+          var cat = Dubtrack.helpers.cookie.get('dubtrack-disable-role-colors');
+          if (!cat) {
+            $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:100px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:100px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
+          } else if (cat == "false") {
+            $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:100px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:100px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
+          }
+        }, 1000);
+      }
+    }, 2000);
     $("#chat-txt-message").attr('maxlength', 140);
   },
   toolTips: function() {
     autoDub.toolTip = 'AutoDub is in timer mode. This autovotes at a random time during each song.';
     if ($(".tooltip").text()) $(".tooltip").text(autoDub.toolTip);
   },
-  pmMenu: function(){
+  pmMenu: function() {
     var status = $("#usrbottom").css("display");
-    if (status == "none"){
-     $.ajax({
-       dataType: "json",
-       type : "GET",
-       url: "https://api.dubtrack.fm/room/"+Dubtrack.room.model.id+"/users", 
-            success:  function (formatted){
-         for (var i = 0; i<formatted.data.length; i++){
-          var id = formatted.data[i]._user._id;
-          var name = formatted.data[i]._user.username;
-          $('#usrsneak').prepend('<li onclick="autoDub.makeConvo(\''+id+'\',\''+name+'\')" id="yoits'+id+'">'+name+'</li>');
+    if (status == "none") {
+      $.ajax({
+        dataType: "json",
+        type: "GET",
+        url: "https://api.dubtrack.fm/room/" + Dubtrack.room.model.id + "/users",
+        success: function(formatted) {
+          for (var i = 0; i < formatted.data.length; i++) {
+            var id = formatted.data[i]._user._id;
+            var name = formatted.data[i]._user.username;
+            $('#usrsneak').prepend('<li onclick="autoDub.makeConvo(\'' + id + '\',\'' + name + '\')" id="yoits' + id + '">' + name + '</li>');
+          }
         }
-            }
-     });
-     $("#snklist").text("-");
-    $("#usrbottom").css("display","block");
-  } else {
-    $("#usrbottom").css("display","none");
-    $('#usrsneak').text("");
-    $("#snklist").text("+");
+      });
+      $("#snklist").text("-");
+      $("#usrbottom").css("display", "block");
+    } else {
+      $("#usrbottom").css("display", "none");
+      $('#usrsneak').text("");
+      $("#snklist").text("+");
 
-  }
+    }
   }
 };
 
-autoDub.jlmToggle = function(){
+autoDub.jlmToggle = function() {
   var label = "off";
-  if (autoDub.joinLeaves){
+  if (autoDub.joinLeaves) {
     autoDub.joinLeaves = false;
   } else {
     label = "on";
@@ -745,9 +750,9 @@ autoDub.jlmToggle = function(){
   $("#autoDubjlm").text(label);
 };
 
-autoDub.pmpToggle = function(){
+autoDub.pmpToggle = function() {
   var label = "off";
-  if (autoDub.pmPlus){
+  if (autoDub.pmPlus) {
     autoDub.pmPlus = false;
   } else {
     label = "on";
@@ -757,12 +762,12 @@ autoDub.pmpToggle = function(){
   $("#autoDubpmp").text(label);
 };
 
-autoDub.toggleDeskNotStat = function(){
+autoDub.toggleDeskNotStat = function() {
   var label = 'off';
-  if( autoDub.desktopNotifications ){
+  if (autoDub.desktopNotifications) {
     autoDub.desktopNotifications = false;
     label = 'off';
-  }else{
+  } else {
     label = 'on';
     autoDub.desktopNotifications = true;
   }
@@ -770,9 +775,9 @@ autoDub.toggleDeskNotStat = function(){
   $("#desktopNotificationStatus").text(label);
 }
 
-autoDub.dvmToggle = function(){
+autoDub.dvmToggle = function() {
   var label = "off";
-  if (autoDub.dvm){
+  if (autoDub.dvm) {
     autoDub.dvm = false;
   } else {
     label = "on";
@@ -782,26 +787,29 @@ autoDub.dvmToggle = function(){
   $("#autoDubdvm").text(label);
 };
 
-autoDub.qtToggle = function(){
+autoDub.qtToggle = function() {
   var label = "off";
-  if (autoDub.queueThanks){
+  if (autoDub.queueThanks) {
     autoDub.queueThanks = false;
-         $("#browser").css("width","100%");
-         $("#browser").css("margin-bottom","0px");
+    $("#browser").css("width", "100%");
+    $("#browser").css("margin-bottom", "0px");
   } else {
     label = "on";
     autoDub.queueThanks = true;
-          $('#browser').one("DOMSubtreeModified", function(){$(window).unbind('click.browser'); $("#browser").css("width","50%");});
+    $('#browser').one("DOMSubtreeModified", function() {
+      $(window).unbind('click.browser');
+      $("#browser").css("width", "50%");
+    });
   }
   autoDub.storage.save();
   $("#autoDubqt").text(label);
 };
 
-autoDub.haToggle = function(){
+autoDub.haToggle = function() {
   var label = "off";
-  if (autoDub.hideAvatars){
+  if (autoDub.hideAvatars) {
     autoDub.hideAvatars = false;
-  $("#hideAvatars").remove();
+    $("#hideAvatars").remove();
   } else {
     label = "on";
     autoDub.hideAvatars = true;
@@ -811,9 +819,9 @@ autoDub.haToggle = function(){
   $("#autoDubha").text(label);
 };
 
-autoDub.etToggle = function(){
+autoDub.etToggle = function() {
   var label = "off";
-  if (autoDub.eveTalk){
+  if (autoDub.eveTalk) {
     autoDub.eveTalk = false;
   } else {
     label = "on";
@@ -824,26 +832,26 @@ autoDub.etToggle = function(){
 };
 
 
-autoDub.altDToggle = function(){
+autoDub.altDToggle = function() {
   var label = "off";
-  if (autoDub.altDancers){
+  if (autoDub.altDancers) {
     autoDub.altDancers = false;
-  $( ".dncr").css( "width", "59px" );
-  $( ".dncr" ).css( "background-image", "url(https://i.imgur.com/IieFNhZ.gif)" );
+    $(".dncr").css("width", "59px");
+    $(".dncr").css("background-image", "url(https://i.imgur.com/IieFNhZ.gif)");
 
   } else {
     label = "on";
     autoDub.altDancers = true;
-  $( ".dncr").css( "width", "88px" );
-  $( ".dncr" ).css( "background-image", "url(https://i.imgur.com/aeOoQTZ.gif)" );
+    $(".dncr").css("width", "88px");
+    $(".dncr").css("background-image", "url(https://i.imgur.com/aeOoQTZ.gif)");
   }
   autoDub.storage.save();
   $("#autoDubaltd").text(label);
 };
 
-autoDub.ducksToggle = function(){
+autoDub.ducksToggle = function() {
   var label = "off";
-  if (autoDub.shootDucks){
+  if (autoDub.shootDucks) {
     autoDub.shootDucks = false;
   } else {
     label = "on";
@@ -853,9 +861,9 @@ autoDub.ducksToggle = function(){
   $("#autoDubducks").text(label);
 };
 
-autoDub.discoballdancersToggle = function(){
+autoDub.discoballdancersToggle = function() {
   var label = "off";
-  if (autoDub.discoballDancers){
+  if (autoDub.discoballDancers) {
     autoDub.discoballDancers = false;
     document.getElementById('discoball').style.display = 'none';
     document.getElementById('dancers').style.height = '0';
@@ -881,8 +889,8 @@ autoDub.newVote = function(data) {
       console.log("autovote off until next song.");
     }
   }
-  if (data.dubtype == "downdub"){
-      if (autoDub.dvm) autoDub.chatSpam.dv(data.user.username);
+  if (data.dubtype == "downdub") {
+    if (autoDub.dvm) autoDub.chatSpam.dv(data.user.username);
   }
 };
 

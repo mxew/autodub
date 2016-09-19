@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.46.1.RYVER",
-  whatsNew: "HAPPY BIRTHDAY RYVER!!!!!!!!!!!!!!!!",
+  version: "00.46.2",
+  whatsNew: "Minor bug fixes and other things.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -465,7 +465,7 @@ autoDub.idmode = {
         var discoballdisplay = 'none';
         var dancersheight = '0';
       }
-      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/J6LzYV8.gif) no-repeat center bottom; display: " + discoballdisplay + "; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
+      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center bottom; display: " + discoballdisplay + "; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
       if (!autoDub.altDancers) {
         $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:" + dancersheight + "; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       } else {
@@ -520,12 +520,16 @@ autoDub.idmode = {
     autoDub.idmode.theBank = autoDub.idmode.fb.child("bank/" + autoDub.idmode.userid);
     autoDub.idmode.theRoomShit = autoDub.idmode.fb.child("roomshit");
     autoDub.idmode.shirt = autoDub.idmode.fb.child("shirt");
+    autoDub.idmode.ballChange = autoDub.idmode.fb.child("ballchange");
     autoDub.idmode.eveWords = autoDub.idmode.fb.child("evetalk");
     autoDub.idmode.onWordChange = autoDub.idmode.eveWords.on("value", function(snapshot) {
       autoDub.idmode.eveTalkr(snapshot);
     });
     autoDub.idmode.onShirt = autoDub.idmode.shirt.on("value", function(snapshot) {
       autoDub.idmode.shirtChange(snapshot);
+    });
+    autoDub.idmode.onBallChange = autoDub.idmode.ballChange.on("value", function(snapshot) {
+      autoDub.idmode.okBallChange(snapshot);
     });
     autoDub.idmode.onValueChange = autoDub.idmode.theBank.on("value", function(snapshot) {
       autoDub.idmode.balchange(snapshot);
@@ -592,6 +596,14 @@ autoDub.idmode = {
     }
 
     $("#discobal").text("Balance: " + bal + " discocheques");
+  },
+  okBallChange: function(snapshot) {
+    var data = snapshot.val();
+    if (data){
+      $("#discoball").css("backgroundImage", "url('"+data+"')");
+    } else {
+      $("#discoball").css("backgroundImage", "url('https://i.imgur.com/Bdn4yrg.gif')");
+    }
   },
   getName: function() {
     var username = $(".user-info").first().text();

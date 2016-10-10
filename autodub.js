@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.46.2",
-  whatsNew: "Minor bug fixes and other things.",
+  version: "00.46.3",
+  whatsNew: "I guess dubtrack modified their Z INDICES so we did too! Enjoy the hot new Z INDICES. Thanks for your thanks.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -465,7 +465,7 @@ autoDub.idmode = {
         var discoballdisplay = 'none';
         var dancersheight = '0';
       }
-      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center bottom; display: " + discoballdisplay + "; width: 100%; height:300px;position: absolute;left: 5;z-index: 6;margin-top: -377px;\"></div>");
+      $(".right_section").prepend("<div id=\"discoball\" style=\"pointer-events: none; background: transparent url(https://i.imgur.com/Bdn4yrg.gif) no-repeat center bottom; display: " + discoballdisplay + "; width: 100%; height:300px;position: absolute;left: 5;z-index: 11;margin-top: -377px;\"></div>");
       if (!autoDub.altDancers) {
         $(".player_sharing").append("<div style=\"width:93%; display:none; pointer-events: none; position:absolute; height:" + dancersheight + "; z-index:120; margin-top:-180px;overflow:hidden;\" id=\"dancers\"><div class=\"dncr\" style=\"float:left; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div class=\"dncr\" style=\"float:right; background: transparent url(https://i.imgur.com/IieFNhZ.gif); width:59px; height:130px;\"></div><div style=\"clear:both;\"></div></div>");
       } else {

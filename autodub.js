@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.46.3",
-  whatsNew: "I guess dubtrack modified their Z INDICES so we did too! Enjoy the hot new Z INDICES. Thanks for your thanks.",
+  version: "00.46.4",
+  whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -488,6 +488,7 @@ autoDub.idmode = {
   onValueChange: null,
   onWordChange: null,
   onDiscoballChange: null,
+  onDanChange: null,
   onShirt: null,
   theBank: null,
   shirt: null,
@@ -521,6 +522,7 @@ autoDub.idmode = {
     autoDub.idmode.theRoomShit = autoDub.idmode.fb.child("roomshit");
     autoDub.idmode.shirt = autoDub.idmode.fb.child("shirt");
     autoDub.idmode.ballChange = autoDub.idmode.fb.child("ballchange");
+    autoDub.idmode.danChange = autoDub.idmode.fb.child("danchange");
     autoDub.idmode.eveWords = autoDub.idmode.fb.child("evetalk");
     autoDub.idmode.onWordChange = autoDub.idmode.eveWords.on("value", function(snapshot) {
       autoDub.idmode.eveTalkr(snapshot);
@@ -530,6 +532,9 @@ autoDub.idmode = {
     });
     autoDub.idmode.onBallChange = autoDub.idmode.ballChange.on("value", function(snapshot) {
       autoDub.idmode.okBallChange(snapshot);
+    });
+    autoDub.idmode.onDanChange = autoDub.idmode.danChange.on("value", function(snapshot) {
+      autoDub.idmode.okDanChange(snapshot);
     });
     autoDub.idmode.onValueChange = autoDub.idmode.theBank.on("value", function(snapshot) {
       autoDub.idmode.balchange(snapshot);
@@ -603,6 +608,22 @@ autoDub.idmode = {
       $("#discoball").css("backgroundImage", "url('"+data+"')");
     } else {
       $("#discoball").css("backgroundImage", "url('https://i.imgur.com/Bdn4yrg.gif')");
+    }
+  },
+  okDanChange: function(snapshot) {
+    var data = snapshot.val();
+    if (data.url){
+      $(".dncr").css("width", data.width);
+      $(".dncr").css("background-image", "url("+data.url+")");
+    } else {
+      if (!autoDub.altDancers) {
+        $(".dncr").css("width", "59px");
+        $(".dncr").css("background-image", "url(https://i.imgur.com/IieFNhZ.gif)");
+
+      } else {
+        $(".dncr").css("width", "88px");
+        $(".dncr").css("background-image", "url(https://i.imgur.com/aeOoQTZ.gif)");
+      }
     }
   },
   getName: function() {

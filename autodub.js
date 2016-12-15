@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.46.4",
+  version: "00.46.5",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -553,7 +553,7 @@ autoDub.idmode = {
     $("#noumcon").append("<div style=\"font-size: 1.1rem; margin-top:30px; font-weight: 700; text-align: center; text-transform: uppercase;\">Indie Discotheque Settings</div><div class=\"adbsettings\" id=\"idsettings\"></div>");
     $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.etToggle()\" class=\"autodub-etlink\">Eve Talk <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubet\">" + et + "</span>");
     $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.discoballdancersToggle()\" class=\"autodub-discoballdancerslink\">Discoball/Dancers <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdiscoballdancers\">" + discoballdancersOpt + "</span>");
-    $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">" + altD + "</span>");
+    $("#idsettings").append("<a id=\"altdopt\" href=\"#\" onclick=\"autoDub.altDToggle()\" class=\"autodub-altDlink\">Alt Dancer <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubaltd\">" + altD + "</span>");
     $("#idsettings").append("<a href=\"#\" onclick=\"autoDub.ducksToggle()\" class=\"autodub-duckslink\">Duck Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubducks\">" + ducksOpt + "</span>");
 
 
@@ -615,7 +615,9 @@ autoDub.idmode = {
     if (data.url){
       $(".dncr").css("width", data.width);
       $(".dncr").css("background-image", "url("+data.url+")");
+      $("#altdopt").css("display", "none");
     } else {
+      $("#altdopt").css("display", "block");
       if (!autoDub.altDancers) {
         $(".dncr").css("width", "59px");
         $(".dncr").css("background-image", "url(https://i.imgur.com/IieFNhZ.gif)");

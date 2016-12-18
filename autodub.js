@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.46.5",
+  version: "00.46.6",
   whatsNew: "",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -408,7 +408,7 @@ autoDub.init = function() {
   // $(".dubup").click();
 
   console.log("autodub v" + autoDub.version + " is a go!");
-  $("<style>.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}.adbsettings a:last-child { border-bottom:none;}</style>").appendTo("head");
+  $("<style>.sneakyMsg a {color: #00f;}.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}.adbsettings a:last-child { border-bottom:none;}</style>").appendTo("head");
   $("<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:35px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v" + autoDub.version + "</div><div style=\"font-size: 1.1rem; font-weight: 700; text-align: center; text-transform: uppercase;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>").insertAfter("#room-info-display");
 
   $(".player_header").append("<span style=\"width: 40px; background-image: url(https://i.imgur.com/0WML9BT.png);color: rgba(0,0,0,0);background-position: center center;background-repeat: no-repeat;\" id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">_</span>");
@@ -643,7 +643,7 @@ autoDub.idmode = {
 autoDub.ui = {
   init: function(mode, jl, dv, qt, pm, ha) {
     if (pm) {
-      $('html').append('<style>#usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 4px;background-color: #000;color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 200px; margin-left: 10px; background-color: #fff; border-left: 1px solid #000; border-right: 1px solid #000;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{padding:4px;background-color:#000;color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font-family:helvetica,arial,sans-serif;font-size:12px}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;background-color:#fff;border-left:1px solid #000;border-right:1px solid #000} .sneakypmPut{font-family:helvetica,arial,sans-serif;width:100%;font-size:12px;border-top:1px solid #000;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
+      $('html').append('<style>#usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 200px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font-family:helvetica,arial,sans-serif;width:100%;font-size:12px;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{background-color:#fff; padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
     var themode = autoDub.mode;
     if (mode) themode = mode;

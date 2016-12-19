@@ -289,11 +289,39 @@ autoDub.newPM = function(event) {
         var msg = data.data[0].message;
         var user = data.data[0]._user.username;
         console.log(data);
+        $.ajax({
+          url: 'https://api.dubtrack.fm/message/' + message_id + '/read',
+          type: 'POST',
+          crossDomain: true,
+          success: function(data2) {
+            console.log(data2);
+
         if (!$("#sneakybox" + message_id).length) {
 
-
           //CREATE THE PM BOX
-          $('#sneakyPM').append('<div id="sneakybox' + message_id + '" class="sneakyPMWindow pmbox' + user + '"><div class="sneakyTop">' + user + ' <div class="sneakyClose" onclick="autoDub.closePM(\'' + message_id + '\')">x</div></div><div id="sneakTexty' + message_id + '" class="sneakyPmtxt"></div><input id="sneakText' + message_id + '" class="sneakypmPut" type="text"></div>');
+          $('#sneakyPM').append('<div id="sneakybox' + message_id + '" class="sneakyPMWindow pmbox' + user + '"><div class="sneakyTop"><span class=\"psons\" id=\"psons'+message_id+'\"></span> <div class="sneakyClose" onclick="autoDub.closePM(\'' + message_id + '\')">x</div></div><div id="sneakTexty' + message_id + '" class="sneakyPmtxt"></div><input id="sneakText' + message_id + '" class="sneakypmPut" type="text"></div>');
+          if (data2.data.usersid.length > 2){
+            var notyou = data2.data.usersid.length - 1;
+            $("#psons"+message_id).text("Group ("+notyou+")");
+          }
+          for (var ok = 0; ok < data2.data.usersid.length; ok++){
+            if (data2.data.usersid[ok] !== Dubtrack.session.id){
+              $.ajax({
+                url: 'https://api.dubtrack.fm/user/'+data2.data.usersid[ok],
+                type: 'GET',
+                crossDomain: true,
+                success: function(data3) {
+                  if (data2.data.usersid.length > 2){
+                    var carto = "psons"+message_id;
+                    var elementTitle = document.getElementById(carto).title;
+                    document.getElementById(carto).title = elementTitle + data3.data.username + "\n";
+                  } else {
+                    $("#psons"+message_id).append(data3.data.username+ " ");
+                  }
+                }
+              });
+            }
+          }
           $('#sneakText' + message_id).keypress(function(e) {
 
             var key = e.which;
@@ -386,6 +414,9 @@ autoDub.newPM = function(event) {
     });
 
   }
+});
+  }
+
 };
 autoDub.init = function() {
   console.log("enter init");
@@ -643,7 +674,7 @@ autoDub.idmode = {
 autoDub.ui = {
   init: function(mode, jl, dv, qt, pm, ha) {
     if (pm) {
-      $('html').append('<style>#usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 200px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font-family:helvetica,arial,sans-serif;width:100%;font-size:12px;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{background-color:#fff; padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
+      $('html').append('<style>.psons{white-space:nowrap; overflow-x:hidden; width:150px; display: inline-block;} #usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 100px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;width:100%;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{background-color:#fff;height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
     var themode = autoDub.mode;
     if (mode) themode = mode;
@@ -684,7 +715,7 @@ autoDub.ui = {
     var hideav = "off";
     if (ha) {
       hideav = "on";
-    } else if (autodub.hideAvatars) {
+    } else if (autoDub.hideAvatars) {
       hideav = "on";
     }
     var pmp = "off";
@@ -764,11 +795,12 @@ autoDub.ui = {
       });
       $("#snklist").text("-");
       $("#usrbottom").css("display", "block");
+      $("#sneakyPMList").css("width", "200px");
     } else {
       $("#usrbottom").css("display", "none");
       $('#usrsneak').text("");
       $("#snklist").text("+");
-
+      $("#sneakyPMList").css("width", "100px");
     }
   }
 };

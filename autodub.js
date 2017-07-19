@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.46.6",
-  whatsNew: "",
+  version: "00.47.0",
+  whatsNew: "Now, in Indie Discotheque, you can fix tags by just clicking on the tags at the bottom of the screen and typing the fix. Hit enter and there you go ok thanks.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -530,6 +530,15 @@ autoDub.idmode = {
       Notification.requestPermission();
     }
     autoDub.idmode.getName();
+    var firstVal = $(".currentSong").text();
+    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\""+ firstVal +"\" id=\"newtagbox\">");
+    $("#newtagbox").bind("keyup", function() {
+    if (event.which == 13) {
+      var newtag = $("#newtagbox").val();
+      Dubtrack.room.chat._messageInputEl.val("!fixtags "+newtag);
+      Dubtrack.room.chat.sendMessage();
+    }
+  });
   },
   getUserId: function(username) {
     $.ajax({
@@ -604,7 +613,7 @@ autoDub.idmode = {
   },
   shirtChange: function(snapshot) {
     var data = snapshot.val();
-    $(".currentSong").html(data.artist + " - " + data.title);
+    $("#newtagbox").val(data.artist + " - " + data.title);
   },
   roomShitChange: function(snapshot) {
     var data = snapshot.val();

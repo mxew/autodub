@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.48.1",
+  version: "00.48.2",
   whatsNew: "Built in last.fm scrobbling is here. Connect your last.fm account in autoDub settings.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -9,6 +9,7 @@ var autoDub = {
   altDancers: false,
   songtimer: null,
   eveTalk: false,
+  songInfo: {},
   queueThanks: true,
   pmPlus: false,
   firstTalk: false,
@@ -443,7 +444,7 @@ autoDub.init = function() {
   var pattern = /[?&]token=/;
   var URL = location.search;
 
-  if (pattern.test(URL)) {
+  if (pattern.test(URL) && !autoDub.lastfm.sk) {
     var queries = {};
     $.each(document.location.search.substr(1).split('&'), function(c, q) {
       var i = q.split('=');
@@ -1197,7 +1198,8 @@ autoDub.storage = {
     if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
     var thingo = localStorage["adLastfmSession"];
-    if (thingo) autoDub.lastfm.sk = JSON.parse(thingo);
+    if (thingo == "false") thingo = false;
+    if (thingo) autoDub.lastfm.sk = thingo;
     autoDub.ui.init(preferences.mode, jl, dv, qt, pm, ha);
 
 

@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.47.1",
-  whatsNew: "Now, in Indie Discotheque, you can fix tags by just clicking on the tags at the bottom of the screen and typing the fix. Hit enter and there you go ok thanks.",
+  version: "00.48.1",
+  whatsNew: "Built in last.fm scrobbling is here. Connect your last.fm account in autoDub settings.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -75,6 +75,13 @@ autoDub.newSong = function(data) {
     description: "",
     format: "MS"
   });
+  var foo = songName.split(" - ");
+  var artist = foo[0];
+  var title = foo[1];
+  autoDub.songInfo = {
+    artist: artist,
+    title: title
+  };
   autoDub.songtimer = setTimeout(function() {
     autoDub.songtimer = null;
     $("#autoDubTimer").countdown("destroy");
@@ -82,7 +89,20 @@ autoDub.newSong = function(data) {
     $(".dubup").click();
     console.log("voted.");
   }, thetimer);
-
+  if (autoDub.lastfm.timer != null) {
+    clearTimeout(autoDub.lastfm.timer);
+    autoDub.lastfm.timer = null;
+  }
+  //last.fm stuff
+  if (autoDub.lastfm.sk) {
+    autoDub.lastfm.duration = Math.floor(length / 1000);
+    autoDub.lastfm.songStart = Math.floor((new Date()).getTime() / 1000);
+    autoDub.lastfm.timer = setTimeout(function() {
+      autoDub.lastfm.timer = null;
+      autoDub.lastfm.scrobble();
+    }, length - 3000);
+    autoDub.lastfm.nowPlaying();
+  }
 };
 
 autoDub.newChat = function(data) {
@@ -296,130 +316,157 @@ autoDub.newPM = function(event) {
           success: function(data2) {
             console.log(data2);
 
-        if (!$("#sneakybox" + message_id).length) {
+            if (!$("#sneakybox" + message_id).length) {
 
-          //CREATE THE PM BOX
-          $('#sneakyPM').append('<div id="sneakybox' + message_id + '" class="sneakyPMWindow pmbox' + user + '"><div class="sneakyTop"><span class=\"psons\" id=\"psons'+message_id+'\"></span> <div class="sneakyClose" onclick="autoDub.closePM(\'' + message_id + '\')">x</div></div><div id="sneakTexty' + message_id + '" class="sneakyPmtxt"></div><input id="sneakText' + message_id + '" class="sneakypmPut" type="text"></div>');
-          if (data2.data.usersid.length > 2){
-            var notyou = data2.data.usersid.length - 1;
-            $("#psons"+message_id).text("Group ("+notyou+")");
-          }
-          for (var ok = 0; ok < data2.data.usersid.length; ok++){
-            if (data2.data.usersid[ok] !== Dubtrack.session.id){
-              $.ajax({
-                url: 'https://api.dubtrack.fm/user/'+data2.data.usersid[ok],
-                type: 'GET',
-                crossDomain: true,
-                success: function(data3) {
-                  if (data2.data.usersid.length > 2){
-                    var carto = "psons"+message_id;
-                    var elementTitle = document.getElementById(carto).title;
-                    document.getElementById(carto).title = elementTitle + data3.data.username + "\n";
-                  } else {
-                    $("#psons"+message_id).append(data3.data.username+ " ");
+              //CREATE THE PM BOX
+              $('#sneakyPM').append('<div id="sneakybox' + message_id + '" class="sneakyPMWindow pmbox' + user + '"><div class="sneakyTop"><span class=\"psons\" id=\"psons' + message_id + '\"></span> <div class="sneakyClose" onclick="autoDub.closePM(\'' + message_id + '\')">x</div></div><div id="sneakTexty' + message_id + '" class="sneakyPmtxt"></div><input id="sneakText' + message_id + '" class="sneakypmPut" type="text"></div>');
+              if (data2.data.usersid.length > 2) {
+                var notyou = data2.data.usersid.length - 1;
+                $("#psons" + message_id).text("Group (" + notyou + ")");
+              }
+              for (var ok = 0; ok < data2.data.usersid.length; ok++) {
+                if (data2.data.usersid[ok] !== Dubtrack.session.id) {
+                  $.ajax({
+                    url: 'https://api.dubtrack.fm/user/' + data2.data.usersid[ok],
+                    type: 'GET',
+                    crossDomain: true,
+                    success: function(data3) {
+                      if (data2.data.usersid.length > 2) {
+                        var carto = "psons" + message_id;
+                        var elementTitle = document.getElementById(carto).title;
+                        document.getElementById(carto).title = elementTitle + data3.data.username + "\n";
+                      } else {
+                        $("#psons" + message_id).append(data3.data.username + " ");
+                      }
+                    }
+                  });
+                }
+              }
+              $('#sneakText' + message_id).keypress(function(e) {
+
+                var key = e.which;
+                if (key == 13) // the enter key code
+                {
+                  var textValue = $(this).attr('id');
+                  var message_id1 = textValue.substring(9, textValue.length);
+
+
+                  console.log(e);
+                  var stuff = $('#sneakText' + message_id1).val();
+                  if (stuff != "") {
+                    var dat = {
+                      "created": 1450294100941,
+                      "message": stuff,
+                      "userid": "56015d872e803803000ffde6",
+                      "messageid": "",
+                      "_message": {
+
+                      },
+                      "_user": {
+                        "username": "ned_stark_reality",
+                        "status": 1,
+                        "roleid": 1,
+                        "dubs": 0,
+                        "created": 1442930054513,
+                        "lastLogin": 0,
+                        "userInfo": {
+                          "_id": "56015d872e803803000ffde7",
+                          "locale": "en_US",
+                          "userid": "56015d872e803803000ffde6",
+                          "__v": 0
+                        },
+                        "_force_updated": 1448741219759,
+                        "_id": "56015d872e803803000ffde6",
+                        "__v": 0
+                      }
+                    };
+
+
+                    $.ajax({
+                      url: 'https://api.dubtrack.fm/message/' + message_id1,
+                      type: 'POST',
+                      data: dat,
+                      crossDomain: true,
+                    });
+                    $('#sneakText' + message_id1).val('');
+
                   }
                 }
               });
-            }
-          }
-          $('#sneakText' + message_id).keypress(function(e) {
+              for (var i = 0; i < data.data.length; i++) {
+                var nice = data.data[i];
 
-            var key = e.which;
-            if (key == 13) // the enter key code
-            {
-              var textValue = $(this).attr('id');
-              var message_id1 = textValue.substring(9, textValue.length);
-
-
-              console.log(e);
-              var stuff = $('#sneakText' + message_id1).val();
-              if (stuff != "") {
-                var dat = {
-                  "created": 1450294100941,
-                  "message": stuff,
-                  "userid": "56015d872e803803000ffde6",
-                  "messageid": "",
-                  "_message": {
-
-                  },
-                  "_user": {
-                    "username": "ned_stark_reality",
-                    "status": 1,
-                    "roleid": 1,
-                    "dubs": 0,
-                    "created": 1442930054513,
-                    "lastLogin": 0,
-                    "userInfo": {
-                      "_id": "56015d872e803803000ffde7",
-                      "locale": "en_US",
-                      "userid": "56015d872e803803000ffde6",
-                      "__v": 0
-                    },
-                    "_force_updated": 1448741219759,
-                    "_id": "56015d872e803803000ffde6",
-                    "__v": 0
-                  }
-                };
-
-
-                $.ajax({
-                  url: 'https://api.dubtrack.fm/message/' + message_id1,
-                  type: 'POST',
-                  data: dat,
-                  crossDomain: true,
-                });
-                $('#sneakText' + message_id1).val('');
+                var msg0 = data.data[i].message;
+                var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+                var user1 = data.data[i]._user.username;
+                $('#sneakTexty' + message_id).prepend('<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>');
 
               }
+              emojify.run(document.getElementById('sneakTexty' + message_id));
+
+              $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
+
+
+            } else {
+              var newChat = "";
+              for (var i = data.data.length - 1; i >= 0; i--) {
+                var nice = data.data[i];
+                var msg0 = data.data[i].message;
+                var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
+                var user1 = data.data[i]._user.username;
+                newChat += '<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>';
+
+              }
+              $("#sneakTexty" + message_id).html(newChat);
+              emojify.run(document.getElementById('sneakTexty' + message_id));
+
+              $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
+
+
             }
-          });
-          for (var i = 0; i < data.data.length; i++) {
-            var nice = data.data[i];
 
-            var msg0 = data.data[i].message;
-            var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
-            var user1 = data.data[i]._user.username;
-            $('#sneakTexty' + message_id).prepend('<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>');
 
+
+          },
+          error: function(xhr, textStatus, errorThrown) {
+            console.log('ajax pm failed :( ');
           }
-          emojify.run(document.getElementById('sneakTexty' + message_id));
+        });
 
-          $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
-
-
-        } else {
-          var newChat = "";
-          for (var i = data.data.length - 1; i >= 0; i--) {
-            var nice = data.data[i];
-            var msg0 = data.data[i].message;
-            var msg1 = Dubtrack.helpers.text.convertHtmltoTags(msg0);
-            var user1 = data.data[i]._user.username;
-            newChat += '<div class="sneakyMsg"><strong>' + user1 + ':</strong> ' + msg1 + '</div>';
-
-          }
-          $("#sneakTexty" + message_id).html(newChat);
-          emojify.run(document.getElementById('sneakTexty' + message_id));
-
-          $("#sneakTexty" + message_id).scrollTop($("#sneakTexty" + message_id)[0].scrollHeight);
-
-
-        }
-
-
-
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log('ajax pm failed :( ');
       }
     });
-
-  }
-});
   }
 
 };
 autoDub.init = function() {
   console.log("enter init");
+  var pattern = /[?&]token=/;
+  var URL = location.search;
+
+  if (pattern.test(URL)) {
+    var queries = {};
+    $.each(document.location.search.substr(1).split('&'), function(c, q) {
+      var i = q.split('=');
+      queries[i[0].toString()] = i[1].toString();
+    });
+    //token time
+    var params = {
+      api_key: autoDub.lastfm.key,
+      token: queries.token,
+      method: "auth.getSession"
+    };
+
+    var sig = autoDub.lastfm.getApiSignature(params);
+    params.api_sig = sig;
+
+    var request_url = 'https://ws.audioscrobbler.com/2.0/?' + serialize(params) + "&format=json";
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', request_url, true);
+    xhr.onload = autoDub.lastfm.newSession(xhr);
+    xhr.onerror = autoDub.lastfm._onAjaxError;
+
+    xhr.send();
+  }
 
   autoDub.started = true;
   var script = document.createElement('script');
@@ -439,7 +486,7 @@ autoDub.init = function() {
   // $(".dubup").click();
 
   console.log("autodub v" + autoDub.version + " is a go!");
-  $("<style>.sneakyMsg a {color: #00f;}.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}.adbsettings a:last-child { border-bottom:none;}</style>").appendTo("head");
+  $("<style>.sneakyMsg a {color: #00f;}.adbsettings a{display: block;padding: 8px 0;padding: .5rem 0;border-bottom: 1px solid #878c8e;color:#878c8e;zoom: 1;}</style>").appendTo("head");
   $("<div style=\"padding-bottom: 56.25%; display:none; position: relative; z-index: 5;\" id=\"noumBoard\"><div id=\"noumcon\" style=\"height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: scroll; padding: 0 16px 0 0; padding: 0 1rem 0 0;\"><div style=\"font-size:35px;font-weight:700; padding-bottom:15px; text-align:center;\">AutoDub v" + autoDub.version + "</div><div style=\"font-size: 1.1rem; font-weight: 700; text-align: center; text-transform: uppercase;\">General Settings</div><div class=\"adbsettings\" id=\"adbsettings\"></div></div></div>").insertAfter("#room-info-display");
 
   $(".player_header").append("<span style=\"width: 40px; background-image: url(https://i.imgur.com/0WML9BT.png);color: rgba(0,0,0,0);background-position: center center;background-repeat: no-repeat;\" id=\"buttonThingThanks2\" onclick=\"autoDub.noumBoard()\">_</span>");
@@ -468,6 +515,121 @@ autoDub.noumBoard = function() {
   $("#mods-controllers").css("display", "none");
   $(".player_container").css("display", "none");
   $("#noumBoard").css("display", "block");
+};
+
+autoDub.lastfm = {
+  sk: false, //for last.fm user tt_discotheque
+  key: "d8fdf22c67610b61629af90605c31f40",
+  songStart: null,
+  duration: null,
+  timer: null,
+  newSession: function(xhr) {
+
+    return function() {
+      console.log("your last.fm session key has been SET!");
+      jsonResponse = JSON.parse(xhr.responseText);
+      autoDub.lastfm.sk = jsonResponse.session.key;
+      localStorage["adLastfmSession"] = autoDub.lastfm.sk;
+      $("#lfmsetting").html("<span id=\"lfmsetting\"><a id=\"lfmsetting\" href=\"#\" onclick=\"autoDub.lfmClick()\" class=\"autodub-jllink\">Scrobble: <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDublfm\"> Connected to last.fm. Click to disconnect.</span></a></span>")
+    };
+  },
+  scrobble: function() {
+    var artist = autoDub.songInfo.artist;
+    var track = autoDub.songInfo.title;
+
+    var params = {
+      artist: artist,
+      track: track,
+      timestamp: autoDub.lastfm.songStart,
+      api_key: autoDub.lastfm.key,
+      sk: autoDub.lastfm.sk,
+      method: "track.scrobble"
+    };
+
+    var sig = autoDub.lastfm.getApiSignature(params);
+    params.api_sig = sig;
+
+    var request_url = 'https://ws.audioscrobbler.com/2.0/?' + serialize(params);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', request_url, true);
+    xhr.onload = console.log("scrobbled");
+    xhr.onerror = autoDub.lastfm._onAjaxError;
+    xhr.send();
+
+  },
+  love: function() {
+    var artist = autoDub.songInfo.artist;
+    var track = autoDub.songInfo.title;
+
+    var params = {
+      artist: artist,
+      track: track,
+      api_key: autoDub.lastfm.key,
+      sk: autoDub.lastfm.sk,
+      method: "track.love"
+    };
+
+    var sig = autoDub.lastfm.getApiSignature(params);
+    params.api_sig = sig;
+
+    var request_url = 'https://ws.audioscrobbler.com/2.0/?' + serialize(params);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', request_url, true);
+    xhr.onload = console.log("loved");
+    xhr.onerror = autoDub.lastfm._onAjaxError;
+    xhr.send();
+
+  },
+  _onAjaxError: function(xhr, status, error) {
+    console.log(xhr);
+    console.log(status);
+    console.log(error);
+  },
+  nowPlaying: function() {
+    var artist = autoDub.songInfo.artist;
+    var track = autoDub.songInfo.title;
+
+    var params = {
+      artist: artist,
+      track: track,
+      duration: autoDub.lastfm.duration,
+      api_key: autoDub.lastfm.key,
+      sk: autoDub.lastfm.sk,
+      method: "track.updateNowPlaying"
+    };
+
+    var sig = autoDub.lastfm.getApiSignature(params);
+    params.api_sig = sig;
+
+    var request_url = 'https://ws.audioscrobbler.com/2.0/?' + serialize(params);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', request_url, true);
+    xhr.onload = console.log("nowplayd");
+    xhr.onerror = autoDub.lastfm._onAjaxError;
+
+    xhr.send();
+
+  },
+  getApiSignature: function(params) {
+    var i, key, keys, max, paramString;
+
+    keys = [];
+    paramString = "";
+
+    for (key in params) {
+      if (params.hasOwnProperty(key)) {
+        keys.push(key);
+      }
+    }
+    keys.sort();
+
+    for (i = 0, max = keys.length; i < max; i += 1) {
+      key = keys[i];
+      paramString += key + params[key];
+    }
+
+    return calcMD5(paramString + "b633ba4468e89c9a2a4293029bb51176");
+  }
 };
 
 autoDub.userJoin = function(data) {
@@ -531,14 +693,14 @@ autoDub.idmode = {
     }
     autoDub.idmode.getName();
     var firstVal = $(".currentSong").text();
-    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\""+ firstVal +"\" id=\"newtagbox\">");
+    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\"" + firstVal + "\" id=\"newtagbox\">");
     $("#newtagbox").bind("keyup", function() {
-    if (event.which == 13) {
-      var newtag = $("#newtagbox").val();
-      Dubtrack.room.chat._messageInputEl.val("!fixtags "+newtag);
-      Dubtrack.room.chat.sendMessage();
-    }
-  });
+      if (event.which == 13) {
+        var newtag = $("#newtagbox").val();
+        Dubtrack.room.chat._messageInputEl.val("!fixtags " + newtag);
+        Dubtrack.room.chat.sendMessage();
+      }
+    });
   },
   getUserId: function(username) {
     $.ajax({
@@ -614,14 +776,16 @@ autoDub.idmode = {
   shirtChange: function(snapshot) {
     var data = snapshot.val();
     var firstVal = data.artist + " - " + data.title;
-    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\""+ firstVal +"\" id=\"newtagbox\">");
+    autoDub.songInfo.artist = data.artist;
+    autoDub.songInfo.title = data.title;
+    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\"" + firstVal + "\" id=\"newtagbox\">");
     $("#newtagbox").bind("keyup", function() {
-    if (event.which == 13) {
-      var newtag = $("#newtagbox").val();
-      Dubtrack.room.chat._messageInputEl.val("!fixtags "+newtag);
-      Dubtrack.room.chat.sendMessage();
-    }
-  });
+      if (event.which == 13) {
+        var newtag = $("#newtagbox").val();
+        Dubtrack.room.chat._messageInputEl.val("!fixtags " + newtag);
+        Dubtrack.room.chat.sendMessage();
+      }
+    });
   },
   roomShitChange: function(snapshot) {
     var data = snapshot.val();
@@ -652,17 +816,17 @@ autoDub.idmode = {
   },
   okBallChange: function(snapshot) {
     var data = snapshot.val();
-    if (data){
-      $("#discoball").css("backgroundImage", "url('"+data+"')");
+    if (data) {
+      $("#discoball").css("backgroundImage", "url('" + data + "')");
     } else {
       $("#discoball").css("backgroundImage", "url('https://i.imgur.com/Bdn4yrg.gif')");
     }
   },
   okDanChange: function(snapshot) {
     var data = snapshot.val();
-    if (data.url){
+    if (data.url) {
       $(".dncr").css("width", data.width);
-      $(".dncr").css("background-image", "url("+data.url+")");
+      $(".dncr").css("background-image", "url(" + data.url + ")");
       $("#altdopt").css("display", "none");
     } else {
       $("#altdopt").css("display", "block");
@@ -749,13 +913,18 @@ autoDub.ui = {
       desktopNotificationStatus = 'off';
     }
 
+    var lfmTxt = "<span id=\"lfmsetting\"><a href=\"http://www.last.fm/api/auth/?api_key=" + autoDub.lastfm.key + "&cb=" + window.location.href + "\" class=\"autodub-jllink\">Scrobble: <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDublfm\">Click to connect last.fm.</span></a></span>";
+    if (autoDub.lastfm.sk) lfmTxt = "<span id=\"lfmsetting\"><a id=\"lfmsetting\" href=\"#\" onclick=\"autoDub.lfmClick()\" class=\"autodub-jllink\">Scrobble: <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDublfm\"> Connected to last.fm. Click to disconnect.</span></a></span>";
+
+
     $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">" + jlm + "</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">" + dvm + "</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.haToggle()\" class=\"autodub-qtlink\">Hide Avatars <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubha\">" + hideav + "</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-halink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">" + qtm + "</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">" + desktopNotificationStatus + "</span>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">" + pmp + "</span>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">" + jlm + "</span></a>");
+    $("#adbsettings").append(lfmTxt);
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">" + dvm + "</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.haToggle()\" class=\"autodub-qtlink\">Hide Avatars <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubha\">" + hideav + "</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-halink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">" + qtm + "</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">" + desktopNotificationStatus + "</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">" + pmp + "</span></a>");
     $("<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>").appendTo("head");
     autoDub.ui.toolTips();
     $('.autodub-link').hover(function() {
@@ -820,6 +989,14 @@ autoDub.ui = {
       $("#sneakyPMList").css("width", "100px");
     }
   }
+};
+
+
+autoDub.lfmClick = function() {
+  console.log("lastfm session DESTROYED.");
+  autoDub.lastfm.sk = false;
+  localStorage["adLastfmSession"] = autoDub.lastfm.sk;
+  $("#lfmsetting").html("<span id=\"lfmsetting\"><a href=\"http://www.last.fm/api/auth/?api_key=" + autoDub.lastfm.key + "&cb=" + window.location.href + "\" class=\"autodub-jllink\">Scrobble: <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDublfm\">Click to connect last.fm.</span></a></span>");
 };
 
 autoDub.jlmToggle = function() {
@@ -997,6 +1174,7 @@ autoDub.storage = {
     };
     var preferences = JSON.stringify(save_file);
     localStorage["autoDub"] = preferences;
+    if (autoDub.lastfm.sk) localStorage["adLastfmSession"] = autoDub.lastfm.sk;
   },
   restore: function() {
     var favorite = localStorage["autoDub"];
@@ -1018,10 +1196,743 @@ autoDub.storage = {
     if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
     if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
+    var thingo = localStorage["adLastfmSession"];
+    if (thingo) autoDub.lastfm.sk = JSON.parse(thingo);
     autoDub.ui.init(preferences.mode, jl, dv, qt, pm, ha);
+
+
   }
 };
 
-autoDub.init();
+/*
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Copyright (C) Paul Johnston 1999 - 2000.
+ * Updated by Greg Holt 2000 - 2001.
+ * See http://pajhome.org.uk/site/legal.html for details.
+ */
 
-if("undefined"!=typeof responsiveVoice)console.log("ResponsiveVoice already loaded"),console.log(responsiveVoice);else var ResponsiveVoice=function(){var e=this;e.version=3,console.log("ResponsiveVoice r"+e.version);var a=[{name:"UK English Female",voiceIDs:[3,5,1,6,7,8]},{name:"UK English Male",voiceIDs:[0,4,2,6,7,8]},{name:"US English Female",voiceIDs:[39,40,41,42,43,44]},{name:"Spanish Female",voiceIDs:[19,16,17,18,20,15]},{name:"French Female",voiceIDs:[21,22,23,26]},{name:"Deutsch Female",voiceIDs:[27,28,29,30,31,32]},{name:"Italian Female",voiceIDs:[33,34,35,36,37,38]},{name:"Greek Female",voiceIDs:[62,63,64]},{name:"Hungarian Female",voiceIDs:[9,10,11]},{name:"Russian Female",voiceIDs:[47,48,49]},{name:"Dutch Female",voiceIDs:[45]},{name:"Swedish Female",voiceIDs:[65]},{name:"Japanese Female",voiceIDs:[50,51,52,53]},{name:"Korean Female",voiceIDs:[54,55,56,57]},{name:"Chinese Female",voiceIDs:[58,59,60,61]},{name:"Hindi Female",voiceIDs:[66,67]},{name:"Serbian Male",voiceIDs:[12]},{name:"Croatian Male",voiceIDs:[13]},{name:"Bosnian Male",voiceIDs:[14]},{name:"Romanian Male",voiceIDs:[46]},{name:"Fallback UK Female",voiceIDs:[8]}],n=[{name:"Google UK English Male"},{name:"Agnes"},{name:"Daniel Compact"},{name:"Google UK English Female"},{name:"en-GB",rate:.25,pitch:1},{name:"en-AU",rate:.25,pitch:1},{name:"inglés Reino Unido"},{name:"English United Kingdom"},{name:"Fallback en-GB Female",lang:"en-GB",fallbackvoice:!0},{name:"Eszter Compact"},{name:"hu-HU",rate:.4},{name:"Fallback Hungarian",lang:"hu",fallbackvoice:!0},{name:"Fallback Serbian",lang:"sr",fallbackvoice:!0},{name:"Fallback Croatian",lang:"hr",fallbackvoice:!0},{name:"Fallback Bosnian",lang:"bs",fallbackvoice:!0},{name:"Fallback Spanish",lang:"es",fallbackvoice:!0},{name:"Spanish Spain"},{name:"español España"},{name:"Diego Compact",rate:.3},{name:"Google Español"},{name:"es-ES",rate:.2},{name:"Google Français"},{name:"French France"},{name:"francés Francia"},{name:"Virginie Compact",rate:.5},{name:"fr-FR",rate:.25},{name:"Fallback French",lang:"fr",fallbackvoice:!0},{name:"Google Deutsch"},{name:"German Germany"},{name:"alemán Alemania"},{name:"Yannick Compact",rate:.5},{name:"de-DE",rate:.25},{name:"Fallback Deutsch",lang:"de",fallbackvoice:!0},{name:"Google Italiano"},{name:"Italian Italy"},{name:"italiano Italia"},{name:"Paolo Compact",rate:.5},{name:"it-IT",rate:.25},{name:"Fallback Italian",lang:"it",fallbackvoice:!0},{name:"Google US English",timerSpeed:1},{name:"English United States"},{name:"inglés Estados Unidos"},{name:"Vicki"},{name:"en-US",rate:.2,pitch:1,timerSpeed:1.3},{name:"Fallback English",lang:"en-US",fallbackvoice:!0,timerSpeed:0},{name:"Fallback Dutch",lang:"nl",fallbackvoice:!0,timerSpeed:0},{name:"Fallback Romanian",lang:"ro",fallbackvoice:!0},{name:"Milena Compact"},{name:"ru-RU",rate:.25},{name:"Fallback Russian",lang:"ru",fallbackvoice:!0},{name:"Google 日本人",timerSpeed:1},{name:"Kyoko Compact"},{name:"ja-JP",rate:.25},{name:"Fallback Japanese",lang:"ja",fallbackvoice:!0},{name:"Google 한국의",timerSpeed:1},{name:"Narae Compact"},{name:"ko-KR",rate:.25},{name:"Fallback Korean",lang:"ko",fallbackvoice:!0},{name:"Google 中国的",timerSpeed:1},{name:"Ting-Ting Compact"},{name:"zh-CN",rate:.25},{name:"Fallback Chinese",lang:"zh-CN",fallbackvoice:!0},{name:"Alexandros Compact"},{name:"el-GR",rate:.25},{name:"Fallback Greek",lang:"el",fallbackvoice:!0},{name:"Fallback Swedish",lang:"sv",fallbackvoice:!0},{name:"hi-IN",rate:.25},{name:"Fallback Hindi",lang:"hi",fallbackvoice:!0}];e.iOS=/(iPad|iPhone|iPod)/g.test(navigator.userAgent);var l,o=[{name:"he-IL",voiceURI:"he-IL",lang:"he-IL"},{name:"th-TH",voiceURI:"th-TH",lang:"th-TH"},{name:"pt-BR",voiceURI:"pt-BR",lang:"pt-BR"},{name:"sk-SK",voiceURI:"sk-SK",lang:"sk-SK"},{name:"fr-CA",voiceURI:"fr-CA",lang:"fr-CA"},{name:"ro-RO",voiceURI:"ro-RO",lang:"ro-RO"},{name:"no-NO",voiceURI:"no-NO",lang:"no-NO"},{name:"fi-FI",voiceURI:"fi-FI",lang:"fi-FI"},{name:"pl-PL",voiceURI:"pl-PL",lang:"pl-PL"},{name:"de-DE",voiceURI:"de-DE",lang:"de-DE"},{name:"nl-NL",voiceURI:"nl-NL",lang:"nl-NL"},{name:"id-ID",voiceURI:"id-ID",lang:"id-ID"},{name:"tr-TR",voiceURI:"tr-TR",lang:"tr-TR"},{name:"it-IT",voiceURI:"it-IT",lang:"it-IT"},{name:"pt-PT",voiceURI:"pt-PT",lang:"pt-PT"},{name:"fr-FR",voiceURI:"fr-FR",lang:"fr-FR"},{name:"ru-RU",voiceURI:"ru-RU",lang:"ru-RU"},{name:"es-MX",voiceURI:"es-MX",lang:"es-MX"},{name:"zh-HK",voiceURI:"zh-HK",lang:"zh-HK"},{name:"sv-SE",voiceURI:"sv-SE",lang:"sv-SE"},{name:"hu-HU",voiceURI:"hu-HU",lang:"hu-HU"},{name:"zh-TW",voiceURI:"zh-TW",lang:"zh-TW"},{name:"es-ES",voiceURI:"es-ES",lang:"es-ES"},{name:"zh-CN",voiceURI:"zh-CN",lang:"zh-CN"},{name:"nl-BE",voiceURI:"nl-BE",lang:"nl-BE"},{name:"en-GB",voiceURI:"en-GB",lang:"en-GB"},{name:"ar-SA",voiceURI:"ar-SA",lang:"ar-SA"},{name:"ko-KR",voiceURI:"ko-KR",lang:"ko-KR"},{name:"cs-CZ",voiceURI:"cs-CZ",lang:"cs-CZ"},{name:"en-ZA",voiceURI:"en-ZA",lang:"en-ZA"},{name:"en-AU",voiceURI:"en-AU",lang:"en-AU"},{name:"da-DK",voiceURI:"da-DK",lang:"da-DK"},{name:"en-US",voiceURI:"en-US",lang:"en-US"},{name:"en-IE",voiceURI:"en-IE",lang:"en-IE"},{name:"hi-IN",voiceURI:"hi-IN",lang:"hi-IN"},{name:"el-GR",voiceURI:"el-GR",lang:"el-GR"},{name:"ja-JP",voiceURI:"ja-JP",lang:"ja-JP"}],c=100,i=5,t=0,s=!1,r=140;e.fallback_playing=!1,e.fallback_parts=null,e.fallback_part_index=0,e.fallback_audio=null,e.msgparameters=null,e.timeoutId=null,e.OnLoad_callbacks=[],"undefined"!=typeof speechSynthesis&&(speechSynthesis.onvoiceschanged=function(){l=window.speechSynthesis.getVoices(),null!=e.OnVoiceReady&&e.OnVoiceReady.call()}),e.default_rv=a[0],e.OnVoiceReady=null,e.init=function(){"undefined"==typeof speechSynthesis?(console.log("RV: Voice synthesis not supported"),e.enableFallbackMode()):setTimeout(function(){var a=setInterval(function(){var n=window.speechSynthesis.getVoices();0!=n.length||null!=l&&0!=l.length?(console.log("RV: Voice support ready"),e.systemVoicesReady(n),clearInterval(a)):(t++,t>i&&(clearInterval(a),null!=window.speechSynthesis?e.iOS?(console.log("RV: Voice support ready (cached)"),e.systemVoicesReady(o)):(console.log("RV: speechSynthesis present but no system voices found"),e.enableFallbackMode()):e.enableFallbackMode()))},100)},100),e.Dispatch("OnLoad")},e.systemVoicesReady=function(a){l=a,e.mapRVs(),null!=e.OnVoiceReady&&e.OnVoiceReady.call()},e.enableFallbackMode=function(){s=!0,console.log("RV: Enabling fallback mode"),e.mapRVs(),null!=e.OnVoiceReady&&e.OnVoiceReady.call()},e.getVoices=function(){for(var e=[],n=0;n<a.length;n++)e.push({name:a[n].name});return e},e.speak=function(a,n,l){e.msgparameters=l||{},e.msgtext=a,e.msgvoicename=n;var o=[];if(a.length>c){for(var i=a;i.length>c;){var t=i.search(/[:!?.;]+/),r="";if((-1==t||t>=c)&&(t=i.search(/[,]+/)),-1==t||t>=c)for(var m=i.split(" "),v=0;v<m.length&&!(r.length+m[v].length+1>c);v++)r+=(0!=v?" ":"")+m[v];else r=i.substr(0,t+1);i=i.substr(r.length,i.length-r.length),o.push(r)}i.length>0&&o.push(i)}else o.push(a);var g;g=null==n?e.default_rv:e.getResponsiveVoice(n);var d={};if(null!=g.mappedProfile)d=g.mappedProfile;else if(d.systemvoice=e.getMatchedVoice(g),d.collectionvoice={},null==d.systemvoice)return void console.log("RV: ERROR: No voice found for: "+n);1==d.collectionvoice.fallbackvoice?(s=!0,e.fallback_parts=[]):s=!1,e.msgprofile=d;for(var v=0;v<o.length;v++)if(s){var u="https://responsivevoice.org/responsivevoice/getvoice.php?t="+o[v]+"&tl="+d.collectionvoice.lang||d.systemvoice.lang||"en-US",p=document.createElement("AUDIO");p.src=u,p.playbackRate=1,p.preload="auto",p.volume=d.collectionvoice.volume||d.systemvoice.volume||1,e.fallback_parts.push(p)}else{var h=new SpeechSynthesisUtterance;h.voice=d.systemvoice,h.voiceURI=d.systemvoice.voiceURI,h.volume=d.collectionvoice.volume||d.systemvoice.volume||1,h.rate=d.collectionvoice.rate||d.systemvoice.rate||1,h.pitch=d.collectionvoice.pitch||d.systemvoice.pitch||1,h.text=o[v],h.lang=d.collectionvoice.lang||d.systemvoice.lang,h.rvIndex=v,h.rvTotal=o.length,0==v&&(h.onstart=e.speech_onstart),e.msgparameters.onendcalled=!1,null!=l?(v<o.length-1&&o.length>1?(h.onend=l.onchunkend,h.addEventListener("end",l.onchuckend)):(h.onend=e.speech_onend,h.addEventListener("end",e.speech_onend)),h.onerror=l.onerror||function(e){console.log("RV: Error"),console.log(e)},h.onpause=l.onpause,h.onresume=l.onresume,h.onmark=l.onmark,h.onboundary=l.onboundary):(h.onend=e.speech_onend,h.onerror=function(e){console.log("RV: Error"),console.log(e)}),speechSynthesis.speak(h)}s&&(e.fallback_part_index=0,e.fallback_startPart())},e.startTimeout=function(a,n){var l=e.msgprofile.collectionvoice.timerSpeed;null==e.msgprofile.collectionvoice.timerSpeed&&(l=1),0>=l||(e.timeoutId=setTimeout(n,1e3*l*(60/r)*a.split(/\s+/).length))},e.checkAndCancelTimeout=function(){null!=e.timeoutId&&(clearTimeout(e.timeoutId),e.timeoutId=null)},e.speech_timedout=function(){e.cancel(),e.speech_onend()},e.speech_onend=function(){return e.checkAndCancelTimeout(),e.cancelled===!0?void(e.cancelled=!1):void(null!=e.msgparameters&&null!=e.msgparameters.onend&&1!=e.msgparameters.onendcalled&&(e.msgparameters.onendcalled=!0,e.msgparameters.onend()))},e.speech_onstart=function(){e.iOS&&e.startTimeout(e.msgtext,e.speech_timedout),e.msgparameters.onendcalled=!1,null!=e.msgparameters&&null!=e.msgparameters.onstart&&e.msgparameters.onstart()},e.fallback_startPart=function(){0==e.fallback_part_index&&e.speech_onstart(),e.fallback_audio=e.fallback_parts[e.fallback_part_index],null==e.fallback_audio?console.log("RV: Fallback Audio is not available"):(e.fallback_audio.play(),e.fallback_audio.addEventListener("ended",e.fallback_finishPart))},e.fallback_finishPart=function(a){e.checkAndCancelTimeout(),e.fallback_part_index<e.fallback_parts.length-1?(e.fallback_part_index++,e.fallback_startPart()):e.speech_onend()},e.cancel=function(){e.checkAndCancelTimeout(),s?null!=e.fallback_audio&&e.fallback_audio.pause():(e.cancelled=!0,speechSynthesis.cancel())},e.voiceSupport=function(){return"speechSynthesis"in window},e.OnFinishedPlaying=function(a){null!=e.msgparameters&&null!=e.msgparameters.onend&&e.msgparameters.onend()},e.setDefaultVoice=function(a){var n=e.getResponsiveVoice(a);null!=n&&(e.default_vr=n)},e.mapRVs=function(){for(var l=0;l<a.length;l++)for(var o=a[l],c=0;c<o.voiceIDs.length;c++){var i=n[o.voiceIDs[c]];if(1==i.fallbackvoice){o.mappedProfile={systemvoice:{},collectionvoice:i};break}var t=e.getSystemVoice(i.name);if(null!=t){o.mappedProfile={systemvoice:t,collectionvoice:i};break}}},e.getMatchedVoice=function(a){for(var l=0;l<a.voiceIDs.length;l++){var o=e.getSystemVoice(n[a.voiceIDs[l]].name);if(null!=o)return o}return null},e.getSystemVoice=function(e){if("undefined"==typeof l)return null;for(var a=0;a<l.length;a++)if(l[a].name==e)return l[a];return null},e.getResponsiveVoice=function(e){for(var n=0;n<a.length;n++)if(a[n].name==e)return a[n];return null},e.Dispatch=function(a){if(e.hasOwnProperty(a+"_callbacks")&&e[a+"_callbacks"].length>0)for(var n=e[a+"_callbacks"],l=0;l<n.length;l++)n[l]()},e.AddEventListener=function(a,n){e.hasOwnProperty(a+"_callbacks")?e[a+"_callbacks"].push(n):console.log("RV: Event listener not found: "+a)},"undefined"==typeof $?document.addEventListener("DOMContentLoaded",function(){e.init()}):$(document).ready(function(){e.init()})},responsiveVoice=new ResponsiveVoice;
+/*
+ * Convert a 32-bit number to a hex string with ls-byte first
+ */
+var hex_chr = "0123456789abcdef";
+
+function rhex(num) {
+  str = "";
+  for (j = 0; j <= 3; j++)
+    str += hex_chr.charAt((num >> (j * 8 + 4)) & 0x0F) +
+    hex_chr.charAt((num >> (j * 8)) & 0x0F);
+  return str;
+}
+
+/*
+ * Convert a string to a sequence of 16-word blocks, stored as an array.
+ * Append padding bits and the length, as described in the MD5 standard.
+ */
+function str2blks_MD5(str) {
+  nblk = ((str.length + 8) >> 6) + 1;
+  blks = new Array(nblk * 16);
+  for (i = 0; i < nblk * 16; i++) blks[i] = 0;
+  for (i = 0; i < str.length; i++)
+    blks[i >> 2] |= str.charCodeAt(i) << ((i % 4) * 8);
+  blks[i >> 2] |= 0x80 << ((i % 4) * 8);
+  blks[nblk * 16 - 2] = str.length * 8;
+  return blks;
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function add(x, y) {
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left
+ */
+function rol(num, cnt) {
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * These functions implement the basic operation for each round of the
+ * algorithm.
+ */
+function cmn(q, a, b, x, s, t) {
+  return add(rol(add(add(a, q), add(x, t)), s), b);
+}
+
+function ff(a, b, c, d, x, s, t) {
+  return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+}
+
+function gg(a, b, c, d, x, s, t) {
+  return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+}
+
+function hh(a, b, c, d, x, s, t) {
+  return cmn(b ^ c ^ d, a, b, x, s, t);
+}
+
+function ii(a, b, c, d, x, s, t) {
+  return cmn(c ^ (b | (~d)), a, b, x, s, t);
+}
+
+/*
+ * Take a string and return the hex representation of its MD5.
+ */
+function calcMD5(str) {
+  x = str2blks_MD5(str);
+  a = 1732584193;
+  b = -271733879;
+  c = -1732584194;
+  d = 271733878;
+
+  for (i = 0; i < x.length; i += 16) {
+    olda = a;
+    oldb = b;
+    oldc = c;
+    oldd = d;
+
+    a = ff(a, b, c, d, x[i + 0], 7, -680876936);
+    d = ff(d, a, b, c, x[i + 1], 12, -389564586);
+    c = ff(c, d, a, b, x[i + 2], 17, 606105819);
+    b = ff(b, c, d, a, x[i + 3], 22, -1044525330);
+    a = ff(a, b, c, d, x[i + 4], 7, -176418897);
+    d = ff(d, a, b, c, x[i + 5], 12, 1200080426);
+    c = ff(c, d, a, b, x[i + 6], 17, -1473231341);
+    b = ff(b, c, d, a, x[i + 7], 22, -45705983);
+    a = ff(a, b, c, d, x[i + 8], 7, 1770035416);
+    d = ff(d, a, b, c, x[i + 9], 12, -1958414417);
+    c = ff(c, d, a, b, x[i + 10], 17, -42063);
+    b = ff(b, c, d, a, x[i + 11], 22, -1990404162);
+    a = ff(a, b, c, d, x[i + 12], 7, 1804603682);
+    d = ff(d, a, b, c, x[i + 13], 12, -40341101);
+    c = ff(c, d, a, b, x[i + 14], 17, -1502002290);
+    b = ff(b, c, d, a, x[i + 15], 22, 1236535329);
+
+    a = gg(a, b, c, d, x[i + 1], 5, -165796510);
+    d = gg(d, a, b, c, x[i + 6], 9, -1069501632);
+    c = gg(c, d, a, b, x[i + 11], 14, 643717713);
+    b = gg(b, c, d, a, x[i + 0], 20, -373897302);
+    a = gg(a, b, c, d, x[i + 5], 5, -701558691);
+    d = gg(d, a, b, c, x[i + 10], 9, 38016083);
+    c = gg(c, d, a, b, x[i + 15], 14, -660478335);
+    b = gg(b, c, d, a, x[i + 4], 20, -405537848);
+    a = gg(a, b, c, d, x[i + 9], 5, 568446438);
+    d = gg(d, a, b, c, x[i + 14], 9, -1019803690);
+    c = gg(c, d, a, b, x[i + 3], 14, -187363961);
+    b = gg(b, c, d, a, x[i + 8], 20, 1163531501);
+    a = gg(a, b, c, d, x[i + 13], 5, -1444681467);
+    d = gg(d, a, b, c, x[i + 2], 9, -51403784);
+    c = gg(c, d, a, b, x[i + 7], 14, 1735328473);
+    b = gg(b, c, d, a, x[i + 12], 20, -1926607734);
+
+    a = hh(a, b, c, d, x[i + 5], 4, -378558);
+    d = hh(d, a, b, c, x[i + 8], 11, -2022574463);
+    c = hh(c, d, a, b, x[i + 11], 16, 1839030562);
+    b = hh(b, c, d, a, x[i + 14], 23, -35309556);
+    a = hh(a, b, c, d, x[i + 1], 4, -1530992060);
+    d = hh(d, a, b, c, x[i + 4], 11, 1272893353);
+    c = hh(c, d, a, b, x[i + 7], 16, -155497632);
+    b = hh(b, c, d, a, x[i + 10], 23, -1094730640);
+    a = hh(a, b, c, d, x[i + 13], 4, 681279174);
+    d = hh(d, a, b, c, x[i + 0], 11, -358537222);
+    c = hh(c, d, a, b, x[i + 3], 16, -722521979);
+    b = hh(b, c, d, a, x[i + 6], 23, 76029189);
+    a = hh(a, b, c, d, x[i + 9], 4, -640364487);
+    d = hh(d, a, b, c, x[i + 12], 11, -421815835);
+    c = hh(c, d, a, b, x[i + 15], 16, 530742520);
+    b = hh(b, c, d, a, x[i + 2], 23, -995338651);
+
+    a = ii(a, b, c, d, x[i + 0], 6, -198630844);
+    d = ii(d, a, b, c, x[i + 7], 10, 1126891415);
+    c = ii(c, d, a, b, x[i + 14], 15, -1416354905);
+    b = ii(b, c, d, a, x[i + 5], 21, -57434055);
+    a = ii(a, b, c, d, x[i + 12], 6, 1700485571);
+    d = ii(d, a, b, c, x[i + 3], 10, -1894986606);
+    c = ii(c, d, a, b, x[i + 10], 15, -1051523);
+    b = ii(b, c, d, a, x[i + 1], 21, -2054922799);
+    a = ii(a, b, c, d, x[i + 8], 6, 1873313359);
+    d = ii(d, a, b, c, x[i + 15], 10, -30611744);
+    c = ii(c, d, a, b, x[i + 6], 15, -1560198380);
+    b = ii(b, c, d, a, x[i + 13], 21, 1309151649);
+    a = ii(a, b, c, d, x[i + 4], 6, -145523070);
+    d = ii(d, a, b, c, x[i + 11], 10, -1120210379);
+    c = ii(c, d, a, b, x[i + 2], 15, 718787259);
+    b = ii(b, c, d, a, x[i + 9], 21, -343485551);
+
+    a = add(a, olda);
+    b = add(b, oldb);
+    c = add(c, oldc);
+    d = add(d, oldd);
+  }
+  return rhex(a) + rhex(b) + rhex(c) + rhex(d);
+}
+
+var serialize = function(obj, prefix) {
+  var str = [];
+  for (var p in obj) {
+    if (obj.hasOwnProperty(p)) {
+      var k = prefix ? prefix + "[" + p + "]" : p,
+        v = obj[p];
+      str.push(typeof v == "object" ?
+        serialize(v, k) :
+        encodeURIComponent(k) + "=" + encodeURIComponent(v));
+    }
+  }
+  return str.join("&");
+}
+autoDub.init();
+if ("undefined" != typeof responsiveVoice) console.log("ResponsiveVoice already loaded"), console.log(responsiveVoice);
+else var ResponsiveVoice = function() {
+    var e = this;
+    e.version = 3, console.log("ResponsiveVoice r" + e.version);
+    var a = [{
+        name: "UK English Female",
+        voiceIDs: [3, 5, 1, 6, 7, 8]
+      }, {
+        name: "UK English Male",
+        voiceIDs: [0, 4, 2, 6, 7, 8]
+      }, {
+        name: "US English Female",
+        voiceIDs: [39, 40, 41, 42, 43, 44]
+      }, {
+        name: "Spanish Female",
+        voiceIDs: [19, 16, 17, 18, 20, 15]
+      }, {
+        name: "French Female",
+        voiceIDs: [21, 22, 23, 26]
+      }, {
+        name: "Deutsch Female",
+        voiceIDs: [27, 28, 29, 30, 31, 32]
+      }, {
+        name: "Italian Female",
+        voiceIDs: [33, 34, 35, 36, 37, 38]
+      }, {
+        name: "Greek Female",
+        voiceIDs: [62, 63, 64]
+      }, {
+        name: "Hungarian Female",
+        voiceIDs: [9, 10, 11]
+      }, {
+        name: "Russian Female",
+        voiceIDs: [47, 48, 49]
+      }, {
+        name: "Dutch Female",
+        voiceIDs: [45]
+      }, {
+        name: "Swedish Female",
+        voiceIDs: [65]
+      }, {
+        name: "Japanese Female",
+        voiceIDs: [50, 51, 52, 53]
+      }, {
+        name: "Korean Female",
+        voiceIDs: [54, 55, 56, 57]
+      }, {
+        name: "Chinese Female",
+        voiceIDs: [58, 59, 60, 61]
+      }, {
+        name: "Hindi Female",
+        voiceIDs: [66, 67]
+      }, {
+        name: "Serbian Male",
+        voiceIDs: [12]
+      }, {
+        name: "Croatian Male",
+        voiceIDs: [13]
+      }, {
+        name: "Bosnian Male",
+        voiceIDs: [14]
+      }, {
+        name: "Romanian Male",
+        voiceIDs: [46]
+      }, {
+        name: "Fallback UK Female",
+        voiceIDs: [8]
+      }],
+      n = [{
+        name: "Google UK English Male"
+      }, {
+        name: "Agnes"
+      }, {
+        name: "Daniel Compact"
+      }, {
+        name: "Google UK English Female"
+      }, {
+        name: "en-GB",
+        rate: .25,
+        pitch: 1
+      }, {
+        name: "en-AU",
+        rate: .25,
+        pitch: 1
+      }, {
+        name: "inglés Reino Unido"
+      }, {
+        name: "English United Kingdom"
+      }, {
+        name: "Fallback en-GB Female",
+        lang: "en-GB",
+        fallbackvoice: !0
+      }, {
+        name: "Eszter Compact"
+      }, {
+        name: "hu-HU",
+        rate: .4
+      }, {
+        name: "Fallback Hungarian",
+        lang: "hu",
+        fallbackvoice: !0
+      }, {
+        name: "Fallback Serbian",
+        lang: "sr",
+        fallbackvoice: !0
+      }, {
+        name: "Fallback Croatian",
+        lang: "hr",
+        fallbackvoice: !0
+      }, {
+        name: "Fallback Bosnian",
+        lang: "bs",
+        fallbackvoice: !0
+      }, {
+        name: "Fallback Spanish",
+        lang: "es",
+        fallbackvoice: !0
+      }, {
+        name: "Spanish Spain"
+      }, {
+        name: "español España"
+      }, {
+        name: "Diego Compact",
+        rate: .3
+      }, {
+        name: "Google Español"
+      }, {
+        name: "es-ES",
+        rate: .2
+      }, {
+        name: "Google Français"
+      }, {
+        name: "French France"
+      }, {
+        name: "francés Francia"
+      }, {
+        name: "Virginie Compact",
+        rate: .5
+      }, {
+        name: "fr-FR",
+        rate: .25
+      }, {
+        name: "Fallback French",
+        lang: "fr",
+        fallbackvoice: !0
+      }, {
+        name: "Google Deutsch"
+      }, {
+        name: "German Germany"
+      }, {
+        name: "alemán Alemania"
+      }, {
+        name: "Yannick Compact",
+        rate: .5
+      }, {
+        name: "de-DE",
+        rate: .25
+      }, {
+        name: "Fallback Deutsch",
+        lang: "de",
+        fallbackvoice: !0
+      }, {
+        name: "Google Italiano"
+      }, {
+        name: "Italian Italy"
+      }, {
+        name: "italiano Italia"
+      }, {
+        name: "Paolo Compact",
+        rate: .5
+      }, {
+        name: "it-IT",
+        rate: .25
+      }, {
+        name: "Fallback Italian",
+        lang: "it",
+        fallbackvoice: !0
+      }, {
+        name: "Google US English",
+        timerSpeed: 1
+      }, {
+        name: "English United States"
+      }, {
+        name: "inglés Estados Unidos"
+      }, {
+        name: "Vicki"
+      }, {
+        name: "en-US",
+        rate: .2,
+        pitch: 1,
+        timerSpeed: 1.3
+      }, {
+        name: "Fallback English",
+        lang: "en-US",
+        fallbackvoice: !0,
+        timerSpeed: 0
+      }, {
+        name: "Fallback Dutch",
+        lang: "nl",
+        fallbackvoice: !0,
+        timerSpeed: 0
+      }, {
+        name: "Fallback Romanian",
+        lang: "ro",
+        fallbackvoice: !0
+      }, {
+        name: "Milena Compact"
+      }, {
+        name: "ru-RU",
+        rate: .25
+      }, {
+        name: "Fallback Russian",
+        lang: "ru",
+        fallbackvoice: !0
+      }, {
+        name: "Google 日本人",
+        timerSpeed: 1
+      }, {
+        name: "Kyoko Compact"
+      }, {
+        name: "ja-JP",
+        rate: .25
+      }, {
+        name: "Fallback Japanese",
+        lang: "ja",
+        fallbackvoice: !0
+      }, {
+        name: "Google 한국의",
+        timerSpeed: 1
+      }, {
+        name: "Narae Compact"
+      }, {
+        name: "ko-KR",
+        rate: .25
+      }, {
+        name: "Fallback Korean",
+        lang: "ko",
+        fallbackvoice: !0
+      }, {
+        name: "Google 中国的",
+        timerSpeed: 1
+      }, {
+        name: "Ting-Ting Compact"
+      }, {
+        name: "zh-CN",
+        rate: .25
+      }, {
+        name: "Fallback Chinese",
+        lang: "zh-CN",
+        fallbackvoice: !0
+      }, {
+        name: "Alexandros Compact"
+      }, {
+        name: "el-GR",
+        rate: .25
+      }, {
+        name: "Fallback Greek",
+        lang: "el",
+        fallbackvoice: !0
+      }, {
+        name: "Fallback Swedish",
+        lang: "sv",
+        fallbackvoice: !0
+      }, {
+        name: "hi-IN",
+        rate: .25
+      }, {
+        name: "Fallback Hindi",
+        lang: "hi",
+        fallbackvoice: !0
+      }];
+    e.iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+    var l, o = [{
+        name: "he-IL",
+        voiceURI: "he-IL",
+        lang: "he-IL"
+      }, {
+        name: "th-TH",
+        voiceURI: "th-TH",
+        lang: "th-TH"
+      }, {
+        name: "pt-BR",
+        voiceURI: "pt-BR",
+        lang: "pt-BR"
+      }, {
+        name: "sk-SK",
+        voiceURI: "sk-SK",
+        lang: "sk-SK"
+      }, {
+        name: "fr-CA",
+        voiceURI: "fr-CA",
+        lang: "fr-CA"
+      }, {
+        name: "ro-RO",
+        voiceURI: "ro-RO",
+        lang: "ro-RO"
+      }, {
+        name: "no-NO",
+        voiceURI: "no-NO",
+        lang: "no-NO"
+      }, {
+        name: "fi-FI",
+        voiceURI: "fi-FI",
+        lang: "fi-FI"
+      }, {
+        name: "pl-PL",
+        voiceURI: "pl-PL",
+        lang: "pl-PL"
+      }, {
+        name: "de-DE",
+        voiceURI: "de-DE",
+        lang: "de-DE"
+      }, {
+        name: "nl-NL",
+        voiceURI: "nl-NL",
+        lang: "nl-NL"
+      }, {
+        name: "id-ID",
+        voiceURI: "id-ID",
+        lang: "id-ID"
+      }, {
+        name: "tr-TR",
+        voiceURI: "tr-TR",
+        lang: "tr-TR"
+      }, {
+        name: "it-IT",
+        voiceURI: "it-IT",
+        lang: "it-IT"
+      }, {
+        name: "pt-PT",
+        voiceURI: "pt-PT",
+        lang: "pt-PT"
+      }, {
+        name: "fr-FR",
+        voiceURI: "fr-FR",
+        lang: "fr-FR"
+      }, {
+        name: "ru-RU",
+        voiceURI: "ru-RU",
+        lang: "ru-RU"
+      }, {
+        name: "es-MX",
+        voiceURI: "es-MX",
+        lang: "es-MX"
+      }, {
+        name: "zh-HK",
+        voiceURI: "zh-HK",
+        lang: "zh-HK"
+      }, {
+        name: "sv-SE",
+        voiceURI: "sv-SE",
+        lang: "sv-SE"
+      }, {
+        name: "hu-HU",
+        voiceURI: "hu-HU",
+        lang: "hu-HU"
+      }, {
+        name: "zh-TW",
+        voiceURI: "zh-TW",
+        lang: "zh-TW"
+      }, {
+        name: "es-ES",
+        voiceURI: "es-ES",
+        lang: "es-ES"
+      }, {
+        name: "zh-CN",
+        voiceURI: "zh-CN",
+        lang: "zh-CN"
+      }, {
+        name: "nl-BE",
+        voiceURI: "nl-BE",
+        lang: "nl-BE"
+      }, {
+        name: "en-GB",
+        voiceURI: "en-GB",
+        lang: "en-GB"
+      }, {
+        name: "ar-SA",
+        voiceURI: "ar-SA",
+        lang: "ar-SA"
+      }, {
+        name: "ko-KR",
+        voiceURI: "ko-KR",
+        lang: "ko-KR"
+      }, {
+        name: "cs-CZ",
+        voiceURI: "cs-CZ",
+        lang: "cs-CZ"
+      }, {
+        name: "en-ZA",
+        voiceURI: "en-ZA",
+        lang: "en-ZA"
+      }, {
+        name: "en-AU",
+        voiceURI: "en-AU",
+        lang: "en-AU"
+      }, {
+        name: "da-DK",
+        voiceURI: "da-DK",
+        lang: "da-DK"
+      }, {
+        name: "en-US",
+        voiceURI: "en-US",
+        lang: "en-US"
+      }, {
+        name: "en-IE",
+        voiceURI: "en-IE",
+        lang: "en-IE"
+      }, {
+        name: "hi-IN",
+        voiceURI: "hi-IN",
+        lang: "hi-IN"
+      }, {
+        name: "el-GR",
+        voiceURI: "el-GR",
+        lang: "el-GR"
+      }, {
+        name: "ja-JP",
+        voiceURI: "ja-JP",
+        lang: "ja-JP"
+      }],
+      c = 100,
+      i = 5,
+      t = 0,
+      s = !1,
+      r = 140;
+    e.fallback_playing = !1, e.fallback_parts = null, e.fallback_part_index = 0, e.fallback_audio = null, e.msgparameters = null, e.timeoutId = null, e.OnLoad_callbacks = [], "undefined" != typeof speechSynthesis && (speechSynthesis.onvoiceschanged = function() {
+      l = window.speechSynthesis.getVoices(), null != e.OnVoiceReady && e.OnVoiceReady.call()
+    }), e.default_rv = a[0], e.OnVoiceReady = null, e.init = function() {
+      "undefined" == typeof speechSynthesis ? (console.log("RV: Voice synthesis not supported"), e.enableFallbackMode()) : setTimeout(function() {
+        var a = setInterval(function() {
+          var n = window.speechSynthesis.getVoices();
+          0 != n.length || null != l && 0 != l.length ? (console.log("RV: Voice support ready"), e.systemVoicesReady(n), clearInterval(a)) : (t++, t > i && (clearInterval(a), null != window.speechSynthesis ? e.iOS ? (console.log("RV: Voice support ready (cached)"), e.systemVoicesReady(o)) : (console.log("RV: speechSynthesis present but no system voices found"), e.enableFallbackMode()) : e.enableFallbackMode()))
+        }, 100)
+      }, 100), e.Dispatch("OnLoad")
+    }, e.systemVoicesReady = function(a) {
+      l = a, e.mapRVs(), null != e.OnVoiceReady && e.OnVoiceReady.call()
+    }, e.enableFallbackMode = function() {
+      s = !0, console.log("RV: Enabling fallback mode"), e.mapRVs(), null != e.OnVoiceReady && e.OnVoiceReady.call()
+    }, e.getVoices = function() {
+      for (var e = [], n = 0; n < a.length; n++) e.push({
+        name: a[n].name
+      });
+      return e
+    }, e.speak = function(a, n, l) {
+      e.msgparameters = l || {}, e.msgtext = a, e.msgvoicename = n;
+      var o = [];
+      if (a.length > c) {
+        for (var i = a; i.length > c;) {
+          var t = i.search(/[:!?.;]+/),
+            r = "";
+          if ((-1 == t || t >= c) && (t = i.search(/[,]+/)), -1 == t || t >= c)
+            for (var m = i.split(" "), v = 0; v < m.length && !(r.length + m[v].length + 1 > c); v++) r += (0 != v ? " " : "") + m[v];
+          else r = i.substr(0, t + 1);
+          i = i.substr(r.length, i.length - r.length), o.push(r)
+        }
+        i.length > 0 && o.push(i)
+      } else o.push(a);
+      var g;
+      g = null == n ? e.default_rv : e.getResponsiveVoice(n);
+      var d = {};
+      if (null != g.mappedProfile) d = g.mappedProfile;
+      else if (d.systemvoice = e.getMatchedVoice(g), d.collectionvoice = {}, null == d.systemvoice) return void console.log("RV: ERROR: No voice found for: " + n);
+      1 == d.collectionvoice.fallbackvoice ? (s = !0, e.fallback_parts = []) : s = !1, e.msgprofile = d;
+      for (var v = 0; v < o.length; v++)
+        if (s) {
+          var u = "https://responsivevoice.org/responsivevoice/getvoice.php?t=" + o[v] + "&tl=" + d.collectionvoice.lang || d.systemvoice.lang || "en-US",
+            p = document.createElement("AUDIO");
+          p.src = u, p.playbackRate = 1, p.preload = "auto", p.volume = d.collectionvoice.volume || d.systemvoice.volume || 1, e.fallback_parts.push(p)
+        } else {
+          var h = new SpeechSynthesisUtterance;
+          h.voice = d.systemvoice, h.voiceURI = d.systemvoice.voiceURI, h.volume = d.collectionvoice.volume || d.systemvoice.volume || 1, h.rate = d.collectionvoice.rate || d.systemvoice.rate || 1, h.pitch = d.collectionvoice.pitch || d.systemvoice.pitch || 1, h.text = o[v], h.lang = d.collectionvoice.lang || d.systemvoice.lang, h.rvIndex = v, h.rvTotal = o.length, 0 == v && (h.onstart = e.speech_onstart), e.msgparameters.onendcalled = !1, null != l ? (v < o.length - 1 && o.length > 1 ? (h.onend = l.onchunkend, h.addEventListener("end", l.onchuckend)) : (h.onend = e.speech_onend, h.addEventListener("end", e.speech_onend)), h.onerror = l.onerror || function(e) {
+            console.log("RV: Error"), console.log(e)
+          }, h.onpause = l.onpause, h.onresume = l.onresume, h.onmark = l.onmark, h.onboundary = l.onboundary) : (h.onend = e.speech_onend, h.onerror = function(e) {
+            console.log("RV: Error"), console.log(e)
+          }), speechSynthesis.speak(h)
+        }
+      s && (e.fallback_part_index = 0, e.fallback_startPart())
+    }, e.startTimeout = function(a, n) {
+      var l = e.msgprofile.collectionvoice.timerSpeed;
+      null == e.msgprofile.collectionvoice.timerSpeed && (l = 1), 0 >= l || (e.timeoutId = setTimeout(n, 1e3 * l * (60 / r) * a.split(/\s+/).length))
+    }, e.checkAndCancelTimeout = function() {
+      null != e.timeoutId && (clearTimeout(e.timeoutId), e.timeoutId = null)
+    }, e.speech_timedout = function() {
+      e.cancel(), e.speech_onend()
+    }, e.speech_onend = function() {
+      return e.checkAndCancelTimeout(), e.cancelled === !0 ? void(e.cancelled = !1) : void(null != e.msgparameters && null != e.msgparameters.onend && 1 != e.msgparameters.onendcalled && (e.msgparameters.onendcalled = !0, e.msgparameters.onend()))
+    }, e.speech_onstart = function() {
+      e.iOS && e.startTimeout(e.msgtext, e.speech_timedout), e.msgparameters.onendcalled = !1, null != e.msgparameters && null != e.msgparameters.onstart && e.msgparameters.onstart()
+    }, e.fallback_startPart = function() {
+      0 == e.fallback_part_index && e.speech_onstart(), e.fallback_audio = e.fallback_parts[e.fallback_part_index], null == e.fallback_audio ? console.log("RV: Fallback Audio is not available") : (e.fallback_audio.play(), e.fallback_audio.addEventListener("ended", e.fallback_finishPart))
+    }, e.fallback_finishPart = function(a) {
+      e.checkAndCancelTimeout(), e.fallback_part_index < e.fallback_parts.length - 1 ? (e.fallback_part_index++, e.fallback_startPart()) : e.speech_onend()
+    }, e.cancel = function() {
+      e.checkAndCancelTimeout(), s ? null != e.fallback_audio && e.fallback_audio.pause() : (e.cancelled = !0, speechSynthesis.cancel())
+    }, e.voiceSupport = function() {
+      return "speechSynthesis" in window
+    }, e.OnFinishedPlaying = function(a) {
+      null != e.msgparameters && null != e.msgparameters.onend && e.msgparameters.onend()
+    }, e.setDefaultVoice = function(a) {
+      var n = e.getResponsiveVoice(a);
+      null != n && (e.default_vr = n)
+    }, e.mapRVs = function() {
+      for (var l = 0; l < a.length; l++)
+        for (var o = a[l], c = 0; c < o.voiceIDs.length; c++) {
+          var i = n[o.voiceIDs[c]];
+          if (1 == i.fallbackvoice) {
+            o.mappedProfile = {
+              systemvoice: {},
+              collectionvoice: i
+            };
+            break
+          }
+          var t = e.getSystemVoice(i.name);
+          if (null != t) {
+            o.mappedProfile = {
+              systemvoice: t,
+              collectionvoice: i
+            };
+            break
+          }
+        }
+    }, e.getMatchedVoice = function(a) {
+      for (var l = 0; l < a.voiceIDs.length; l++) {
+        var o = e.getSystemVoice(n[a.voiceIDs[l]].name);
+        if (null != o) return o
+      }
+      return null
+    }, e.getSystemVoice = function(e) {
+      if ("undefined" == typeof l) return null;
+      for (var a = 0; a < l.length; a++)
+        if (l[a].name == e) return l[a];
+      return null
+    }, e.getResponsiveVoice = function(e) {
+      for (var n = 0; n < a.length; n++)
+        if (a[n].name == e) return a[n];
+      return null
+    }, e.Dispatch = function(a) {
+      if (e.hasOwnProperty(a + "_callbacks") && e[a + "_callbacks"].length > 0)
+        for (var n = e[a + "_callbacks"], l = 0; l < n.length; l++) n[l]()
+    }, e.AddEventListener = function(a, n) {
+      e.hasOwnProperty(a + "_callbacks") ? e[a + "_callbacks"].push(n) : console.log("RV: Event listener not found: " + a)
+    }, "undefined" == typeof $ ? document.addEventListener("DOMContentLoaded", function() {
+      e.init()
+    }) : $(document).ready(function() {
+      e.init()
+    })
+  },
+  responsiveVoice = new ResponsiveVoice;

@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.48.2",
+  version: "00.48.3",
   whatsNew: "Built in last.fm scrobbling is here. Connect your last.fm account in autoDub settings.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -779,7 +779,8 @@ autoDub.idmode = {
     var firstVal = data.artist + " - " + data.title;
     autoDub.songInfo.artist = data.artist;
     autoDub.songInfo.title = data.title;
-    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\"" + firstVal + "\" id=\"newtagbox\">");
+    $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" id=\"newtagbox\">");
+    $("#newtagbox").val(firstVal);
     $("#newtagbox").bind("keyup", function() {
       if (event.which == 13) {
         var newtag = $("#newtagbox").val();

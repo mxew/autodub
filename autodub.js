@@ -1,13 +1,14 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.48.3",
-  whatsNew: "Built in last.fm scrobbling is here. Connect your last.fm account in autoDub settings.",
+  version: "00.48.4",
+  whatsNew: "Just want to chat without racking up streaming data costs? Try out our new 'NO MEDIA' mode. Built in last.fm scrobbling is here. Connect your last.fm account in autoDub settings.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
   altDancers: false,
   songtimer: null,
+  nm: false,
   eveTalk: false,
   songInfo: {},
   queueThanks: true,
@@ -855,9 +856,17 @@ autoDub.idmode = {
 };
 
 autoDub.ui = {
-  init: function(mode, jl, dv, qt, pm, ha) {
+  init: function(mode, jl, dv, qt, pm, ha, nm1) {
     if (pm) {
       $('html').append('<style>.psons{white-space:nowrap; overflow-x:hidden; width:150px; display: inline-block;} #usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 100px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;width:100%;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{background-color:#fff;height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
+    }
+    if (nm1) {
+      soundManager.stopAll();
+      $("#room-main-player-container").remove();
+      soundManager = null;
+      $(".loading").remove();
+      $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\"https://thompsn.com/autodub/adlogo.svg\" style=\"height:95% \"/></div>");
+
     }
     var themode = autoDub.mode;
     if (mode) themode = mode;
@@ -908,6 +917,13 @@ autoDub.ui = {
       pmp = "on";
     }
 
+    var nm = "off";
+    if (nm1) {
+      nm = "on";
+    } else if (autoDub.nm) {
+      nm = "on";
+    }
+
     var desktopNotificationStatus = 'off';
     if (autoDub.desktopNotifications == true) {
       desktopNotificationStatus = 'on';
@@ -917,15 +933,15 @@ autoDub.ui = {
 
     var lfmTxt = "<span id=\"lfmsetting\"><a href=\"http://www.last.fm/api/auth/?api_key=" + autoDub.lastfm.key + "&cb=" + window.location.href + "\" class=\"autodub-jllink\">Scrobble: <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDublfm\">Click to connect last.fm.</span></a></span>";
     if (autoDub.lastfm.sk) lfmTxt = "<span id=\"lfmsetting\"><a id=\"lfmsetting\" href=\"#\" onclick=\"autoDub.lfmClick()\" class=\"autodub-jllink\">Scrobble: <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDublfm\"> Connected to last.fm. Click to disconnect.</span></a></span>";
-
-
     $("#adbsettings").append("<a href=\"#\" class=\"autodub-link\"><span id=\"autoDubMode\">Vote Timer</span> <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubTimer\">voted</span></a>");
-    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">" + jlm + "</span></a>");
     $("#adbsettings").append(lfmTxt);
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.jlmToggle()\" class=\"autodub-jllink\">Join/Leave <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubjlm\">" + jlm + "</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.dvmToggle()\" class=\"autodub-dvlink\">Downvote Alert <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubdvm\">" + dvm + "</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.haToggle()\" class=\"autodub-qtlink\">Hide Avatars <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubha\">" + hideav + "</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.qtToggle()\" class=\"autodub-halink\">Queue+Chat <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubqt\">" + qtm + "</span></a>");
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.toggleDeskNotStat()\" class=\"autodub-desktopNotificationStatus\" title=\"Show a desktop notification for @ mentions\">Desktop Notifications <span style=\"float:right; color:#fff; font-weight:700;\" id=\"desktopNotificationStatus\">" + desktopNotificationStatus + "</span></a>");
+    $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.noMediaToggle()\" class=\"autodub-nmlink\">No Media Streaming (refresh whenever toggling this to OFF) <span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubnm\">" + nm + "</span></a>");
+
     $("#adbsettings").append("<a href=\"#\" onclick=\"autoDub.pmpToggle()\" class=\"autodub-pmplink\" >PM+ [BETA. Refresh after toggling this. Expect bugs.]<span style=\"float:right; color:#fff; font-weight:700;\" id=\"autoDubpmp\">" + pmp + "</span></a>");
     $("<style>#main_player .player_container #room-main-player-container:before{ visibility: hidden !important; }</style>").appendTo("head");
     autoDub.ui.toolTips();
@@ -1011,6 +1027,24 @@ autoDub.jlmToggle = function() {
   }
   autoDub.storage.save();
   $("#autoDubjlm").text(label);
+};
+
+autoDub.noMediaToggle = function() {
+  var label = "off";
+  if (autoDub.nm) {
+    autoDub.nm = false;
+    label = "refresh now!"
+  } else {
+    label = "on";
+    autoDub.nm = true;
+    soundManager.stopAll();
+    $("#room-main-player-container").remove();
+    soundManager = null;
+    $(".loading").remove();
+    $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\"https://thompsn.com/autodub/adlogo.svg\" style=\"height:95% \"/></div>");
+  }
+  autoDub.storage.save();
+  $("#autoDubnm").text(label);
 };
 
 autoDub.pmpToggle = function() {
@@ -1168,6 +1202,7 @@ autoDub.storage = {
       queueThanks: autoDub.queueThanks,
       hideAvatars: autoDub.hideAvatars,
       lastLoaded: autoDub.lastLoaded,
+      nm: autoDub.nm,
       dvm: autoDub.dvm,
       pmPlus: autoDub.pmPlus,
       desktopNotifications: autoDub.desktopNotifications,
@@ -1193,15 +1228,17 @@ autoDub.storage = {
     var pm = false;
     var ha = false;
     var dv = true;
+    var nm = false;
     if (typeof preferences.pmPlus != "undefined") pm = preferences.pmPlus;
     if (typeof preferences.hideAvatars != "undefined") ha = preferences.hideAvatars;
     if (typeof preferences.dvm != "undefined") dv = preferences.dvm;
     if (typeof preferences.queueThanks != "undefined") qt = preferences.queueThanks;
     if (typeof preferences.joinLeaves != "undefined") jl = preferences.joinLeaves;
+    if (typeof preferences.nm != "undefined") nm = preferences.nm;
     var thingo = localStorage["adLastfmSession"];
     if (thingo == "false") thingo = false;
     if (thingo) autoDub.lastfm.sk = thingo;
-    autoDub.ui.init(preferences.mode, jl, dv, qt, pm, ha);
+    autoDub.ui.init(preferences.mode, jl, dv, qt, pm, ha, nm);
 
 
   }

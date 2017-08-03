@@ -861,12 +861,14 @@ autoDub.ui = {
       $('html').append('<style>.psons{white-space:nowrap; overflow-x:hidden; width:150px; display: inline-block;} #usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 100px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;width:100%;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{background-color:#fff;height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
     if (nm1) {
-      soundManager.stopAll();
-      $("#room-main-player-container").remove();
-      soundManager = null;
-      $(".loading").remove();
-      $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\"https://thompsn.com/autodub/adlogo.svg\" style=\"height:95% \"/></div>");
+      setTimeout(function() {
+        soundManager.stopAll();
 
+        $("#room-main-player-container").remove();
+        soundManager = null;
+        $(".loading").remove();
+        $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\"https://thompsn.com/autodub/adlogo.svg\" style=\"height:95% \"/></div>");
+      }, 5000);
     }
     var themode = autoDub.mode;
     if (mode) themode = mode;

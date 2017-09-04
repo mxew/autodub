@@ -443,6 +443,7 @@ autoDub.newPM = function(event) {
 autoDub.init = function() {
   console.log("enter init");
   var pattern = /[?&]token=/;
+  var pattern2 = /[?&]rohn=/;
   var URL = location.search;
 
   if (pattern.test(URL) && !autoDub.lastfm.sk) {
@@ -685,6 +686,7 @@ autoDub.idmode = {
   onDiscoballChange: null,
   onDanChange: null,
   onShirt: null,
+  onRuler: null,
   theBank: null,
   shirt: null,
   theRoomShit: null,
@@ -725,6 +727,8 @@ autoDub.idmode = {
     autoDub.idmode.theBank = autoDub.idmode.fb.child("bank/" + autoDub.idmode.userid);
     autoDub.idmode.theRoomShit = autoDub.idmode.fb.child("roomshit");
     autoDub.idmode.shirt = autoDub.idmode.fb.child("shirt");
+    autoDub.idmode.ruler = autoDub.idmode.fb.child("ruler");
+
     autoDub.idmode.ballChange = autoDub.idmode.fb.child("ballchange");
     autoDub.idmode.danChange = autoDub.idmode.fb.child("danchange");
     autoDub.idmode.eveWords = autoDub.idmode.fb.child("evetalk");
@@ -733,6 +737,9 @@ autoDub.idmode = {
     });
     autoDub.idmode.onShirt = autoDub.idmode.shirt.on("value", function(snapshot) {
       autoDub.idmode.shirtChange(snapshot);
+    });
+    autoDub.idmode.onRuler = autoDub.idmode.ruler.on("value", function(snapshot) {
+      autoDub.idmode.rulerChange(snapshot);
     });
     autoDub.idmode.onBallChange = autoDub.idmode.ballChange.on("value", function(snapshot) {
       autoDub.idmode.okBallChange(snapshot);
@@ -789,6 +796,15 @@ autoDub.idmode = {
         Dubtrack.room.chat.sendMessage();
       }
     });
+  },
+  rulerChange: function(snapshot) {
+    var data = snapshot.val();
+    if (data.status){
+      var theidr = data.id;
+      $("#rulerstyle").html(".user-"+theidr+" .username { background: url(https://i.imgur.com/KdW4gcu.png?1) no-repeat; padding-left: 20px;} .userid-"+theidr+" .username{background: url(https://i.imgur.com/UcuO9vm.png?1) no-repeat;padding-left: 30px !important;}");
+    } else {
+      $("#rulerstyle").html("");
+    }
   },
   roomShitChange: function(snapshot) {
     var data = snapshot.val();
@@ -858,7 +874,7 @@ autoDub.idmode = {
 autoDub.ui = {
   init: function(mode, jl, dv, qt, pm, ha, nm1) {
     if (pm) {
-      $('html').append('<style>.psons{white-space:nowrap; overflow-x:hidden; width:150px; display: inline-block;} #usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 100px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;width:100%;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{background-color:#fff;height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
+      $('html').append('<style id="rulerstyle"></style><style>.psons{white-space:nowrap; overflow-x:hidden; width:150px; display: inline-block;} #usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 100px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;width:100%;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{background-color:#fff;height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
     if (nm1) {
       setTimeout(function() {

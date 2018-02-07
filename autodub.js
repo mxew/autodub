@@ -13,6 +13,7 @@ var autoDub = {
   songInfo: {},
   queueThanks: true,
   pmPlus: false,
+  nmImage: "https://thompsn.com/autodub/adlogo.svg",
   firstTalk: false,
   hideAvatars: false,
   dvm: true,
@@ -876,16 +877,7 @@ autoDub.ui = {
     if (pm) {
       $('html').append('<style id="rulerstyle"></style><style>.psons{white-space:nowrap; overflow-x:hidden; width:150px; display: inline-block;} #usrsneak li{border-bottom:1px solid #eee; cursor: pointer; padding:4px;}#usrbottom{background-color:#fff; display:none;height:400px;overflow-y:scroll; overflow-x:hidden;}#usrtop{padding: 7px;-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;background-color: rgba(0,0,0,.8);color: #fff;}#sneakyPMList{vertical-align: bottom;display: inline-block; width: 100px; margin-left: 10px;}.sneakyClose{cursor:pointer;float:right;}#Scontainer{font-family:helvetica, arial, san-serif;font-size:12px;background-color:#000; background-color:#fff; max-width:900px; margin-left:auto; margin-right:auto; min-height:100%;}.sneakyTop{-webkit-border-top-left-radius: .3rem; -webkit-border-top-right-radius: .3rem; -moz-border-radius-topleft: .3rem; -moz-border-radius-topright: .3rem; border-top-left-radius: .3rem; border-top-right-radius: .3rem;padding:7px;background-color:rgba(0,0,0,.8);color:#fff}div#sneakyPM{z-index:9000;position:fixed;bottom:56px;font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;}.sneakyPMWindow{display:inline-block; width:200px;margin-left:10px;} .sneakypmPut{font: 1rem/1.5 Open Sans,sans-serif; font-size:13px;width:100%;border-top:1px solid #ccc;background-color:#fff;color:#000!important}.sneakyMsg{padding:5px;} .sneakyMsg:nth-child(even) { background-color: #eee; }.sneakyPmtxt{background-color:#fff;height:200px;overflow-y:scroll; overflow-x:hidden;} </style><div id="sneakyPM"><div id="sneakyPMList"><div id="usrtop">Send a PM <div onclick="autoDub.ui.pmMenu()" id="snklist" class="sneakyClose">+</div></div><div id="usrbottom"><ul id="usrsneak"></ul></div></div></div>');
     }
-    if (nm1) {
-      setTimeout(function() {
-        soundManager.stopAll();
 
-        $("#room-main-player-container").remove();
-        soundManager = null;
-        $(".loading").remove();
-        $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\"https://thompsn.com/autodub/adlogo.svg\" style=\"height:95% \"/></div>");
-      }, 5000);
-    }
     var themode = autoDub.mode;
     if (mode) themode = mode;
     autoDub.roomCheck = setInterval(function() {
@@ -979,7 +971,6 @@ autoDub.ui = {
         })
     });
     setTimeout(function() {
-
       if (Dubtrack.room.model.id == "55f82ef944809b0300f88695") {
         $(".right_section").prepend("<div id=\"discobal\" style=\"position: absolute; margin-top: -20px; font-size: 14px;\">Loading your Discocheque balance...</div>");
         autoDub.idmode.discoball.create();
@@ -992,8 +983,19 @@ autoDub.ui = {
             $("head").append("<style>.user-5660d67dd7c15a6800fa07d9 .username,.user-560164dd2e803803000fffb6 .username,.userid-5660d67dd7c15a6800fa07d9 .username, .userid-560164dd2e803803000fffb6 .username, .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{color:#CB213D !important;} .user-5660d67dd7c15a6800fa07d9 .user-role, .user-560164dd2e803803000fffb6 .user-role{width:100px; background:no-repeat -3px 0 url(https://i.imgur.com/3puCdq3.png); color: rgba(0, 0, 0, 0) !important;} .userid-5660d67dd7c15a6800fa07d9 .user-role, .userid-560164dd2e803803000fffb6 .user-role{width:100px; background: no-repeat -2px url(https://i.imgur.com/7eTBSTh.png); color: rgba(0, 0, 0, 0) !important;}</style>");
           }
         }, 1000);
+          autoDub.nmImage = "https://thompsn.com/autodub/idlogo.svg";
       }
-    }, 2000);
+      if (nm1) {
+        setTimeout(function() {
+          soundManager.stopAll();
+
+          $("#room-main-player-container").remove();
+          soundManager = null;
+          $(".loading").remove();
+          $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\""+ autoDub.nmImage +"\" style=\"height:95% \"/></div>");
+        }, 5000);
+      }
+        }, 2000);
     $("#chat-txt-message").attr('maxlength', 140);
   },
   toolTips: function() {
@@ -1059,7 +1061,7 @@ autoDub.noMediaToggle = function() {
     $("#room-main-player-container").remove();
     soundManager = null;
     $(".loading").remove();
-    $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\"https://thompsn.com/autodub/adlogo.svg\" style=\"height:95% \"/></div>");
+    $(".player_container").append("<div style=\"text-align: center; position: absolute; height: 100%; width: 100%;\" id=\"autoooooDub\"><img src=\""+ autoDub.nmImage +"\" style=\"height:95% \"/></div>");
   }
   autoDub.storage.save();
   $("#autoDubnm").text(label);

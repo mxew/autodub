@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.49.0",
-  whatsNew: "Added a rad new emoji picker + search to the chat input for your mom to use.",
+  version: "00.49.1",
+  whatsNew: "Minor improvments and fixes for Firefox users.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -699,8 +699,8 @@ autoDub.idmode = {
     autoDub.idmode.getName();
     var firstVal = $(".currentSong").text();
     $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" value=\"" + firstVal + "\" id=\"newtagbox\">");
-    $("#newtagbox").bind("keyup", function() {
-      if (event.which == 13) {
+    $("#newtagbox").bind("keyup", function(e) {
+      if (e.which == 13) {
         var newtag = $("#newtagbox").val();
         Dubtrack.room.chat._messageInputEl.val("!fixtags " + newtag);
         Dubtrack.room.chat.sendMessage();
@@ -790,8 +790,8 @@ autoDub.idmode = {
     autoDub.songInfo.title = data.title;
     $(".currentSong").html("<input type=\"text\" style=\"margin-top:-10px; font-style:normal; padding:0; font-weight:700;\" id=\"newtagbox\">");
     $("#newtagbox").val(firstVal);
-    $("#newtagbox").bind("keyup", function() {
-      if (event.which == 13) {
+    $("#newtagbox").bind("keyup", function(e) {
+      if (e.which == 13) {
         var newtag = $("#newtagbox").val();
         Dubtrack.room.chat._messageInputEl.val("!fixtags " + newtag);
         Dubtrack.room.chat.sendMessage();

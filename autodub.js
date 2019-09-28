@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.50.0",
+  version: "00.50.1",
   whatsNew: "H0t new option to enable desktop notifications for new songs.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -143,7 +143,7 @@ autoDub.newChat = function(data) {
         if (uid == "560164dd2e803803000fffb6" && msg.match(ducktimematch)) {
           var ducknotification = new Notification('Quack quack...', {
             icon: 'https://i.imgur.com/1huAkzf.png',
-            body: "ãƒ»ã‚œ â€‹ ã‚œãƒ»ã€‚ã€‚ãƒ»ã‚œã‚œ\_Ã¶<",
+            body: "...・゜ ​ ゜・。。・゜゜\_ö<",
           });
           ducknotification.onclick = function() {
             Dubtrack.room.chat._messageInputEl.val("!shootduck");

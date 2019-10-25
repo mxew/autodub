@@ -1,8 +1,8 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.50.1",
-  whatsNew: "H0t new option to enable desktop notifications for new songs.",
+  version: "00.50.2",
+  whatsNew: "H0t new option to enable desktop notifications for new songs. Fix to videoscreen bug.",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
   roomCheck: null,
@@ -518,6 +518,7 @@ autoDub.init = function() {
 
   $(".displayVideo-el").click(function() {
     $("#noumBoard").css("display", "none");
+    $(".player_container").css("display", "block");
 
   });
   $(".room-info-display").click(function() {

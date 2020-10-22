@@ -1,7 +1,7 @@
 var autoDub = {
   started: false,
   mode: "classic",
-  version: "00.51.0",
+  version: "00.51.1",
   whatsNew: "Ohey guys welcome to QueUp... which I guess makes me... AutoUp? AutoNotdub?",
   firstMessage: "Hey there! AutoDub upvotes at a random time during the song. There's a countdown timer hidden in the 'AUTODUB' tab above the video box.",
   lastLoaded: null,
@@ -175,7 +175,7 @@ autoDub.newChat = function(data) {
       } else {
         if (msg.match(yourStupidName, 'i') || msg.match(/\@everyone/)) {
           var notification = new Notification(name, {
-            icon: 'https://' + window.location.hostname.replace("www","api") + '/user/' + uid + '/image',
+            icon: QueUp.config.apiUrl + '/user/' + uid + '/image',
             body: msg,
           });
         }
@@ -219,7 +219,7 @@ autoDub.makeConvo = function(userid, coolName) {
 
 
   $.ajax({
-    url: 'https://' + window.location.hostname.replace("www","api") + '/message/',
+    url: QueUp.config.apiUrl + '/message/',
     type: 'POST',
     data: nicedata,
     crossDomain: true,
@@ -227,7 +227,7 @@ autoDub.makeConvo = function(userid, coolName) {
       message_id = response.data._id
 
       $.ajax({
-        url: 'https://' + window.location.hostname.replace("www","api") + '/message/' + message_id,
+        url: QueUp.config.apiUrl + '/message/' + message_id,
         type: 'GET',
         crossDomain: true,
         success: function(data) {
@@ -278,7 +278,7 @@ autoDub.makeConvo = function(userid, coolName) {
 
 
                   $.ajax({
-                    url: 'https://' + window.location.hostname.replace("www","api") + '/message/' + message_id1,
+                    url: QueUp.config.apiUrl + '/message/' + message_id1,
                     type: 'POST',
                     data: dat,
                     crossDomain: true,
@@ -327,7 +327,7 @@ autoDub.newPM = function(event) {
     var message_id = event.messageid;
 
     $.ajax({
-      url: 'https://' + window.location.hostname.replace("www","api") + '/message/' + message_id,
+      url: QueUp.config.apiUrl + '/message/' + message_id,
       type: 'GET',
       crossDomain: true,
       success: function(data) {
@@ -335,7 +335,7 @@ autoDub.newPM = function(event) {
         var user = data.data[0]._user.username;
         console.log(data);
         $.ajax({
-          url: 'https://' + window.location.hostname.replace("www","api") + '/message/' + message_id + '/read',
+          url: QueUp.config.apiUrl + '/message/' + message_id + '/read',
           type: 'POST',
           crossDomain: true,
           success: function(data2) {
@@ -352,7 +352,7 @@ autoDub.newPM = function(event) {
               for (var ok = 0; ok < data2.data.usersid.length; ok++) {
                 if (data2.data.usersid[ok] !== QueUp.session.id) {
                   $.ajax({
-                    url: 'https://' + window.location.hostname.replace("www","api") + '/user/' + data2.data.usersid[ok],
+                    url: QueUp.config.apiUrl + '/user/' + data2.data.usersid[ok],
                     type: 'GET',
                     crossDomain: true,
                     success: function(data3) {
@@ -408,7 +408,7 @@ autoDub.newPM = function(event) {
 
 
                     $.ajax({
-                      url: 'https://' + window.location.hostname.replace("www","api") + '/message/' + message_id1,
+                      url: QueUp.config.apiUrl + '/message/' + message_id1,
                       type: 'POST',
                       data: dat,
                       crossDomain: true,
@@ -729,7 +729,7 @@ autoDub.idmode = {
     $.ajax({
       dataType: "json",
       type: "GET",
-      url: "https://" + window.location.hostname.replace("www","api") + "/user/" + username,
+      url: QueUp.config.apiUrl + "/user/" + username,
       success: function(things) {
         var data = things.data;
         var userid = data.userInfo.userid;
@@ -1097,7 +1097,7 @@ autoDub.ui = {
       $.ajax({
         dataType: "json",
         type: "GET",
-        url: "https://" + window.location.hostname.replace("www","api") + "/room/" + QueUp.room.model.id + "/users",
+        url: QueUp.config.apiUrl + "/room/" + QueUp.room.model.id + "/users",
         success: function(formatted) {
           for (var i = 0; i < formatted.data.length; i++) {
             var id = formatted.data[i]._user._id;
